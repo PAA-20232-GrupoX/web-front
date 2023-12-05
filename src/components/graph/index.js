@@ -481,10 +481,7 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
       const nodeId = node.id();
       if (treePath.find((item) => item.id === nodeId) !== undefined) {
         node._private.data.visited = "Yes"
-        // console.log(node._private.data.visited)
-        // console.log(node._private.data.displayName)
       }
-      // node._private.data.visited = treePath.find((item) => item.id === nodeId) ? "Yes" : "No"
     });
 
   }, [treePath]);
