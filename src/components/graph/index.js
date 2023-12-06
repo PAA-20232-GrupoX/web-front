@@ -172,10 +172,14 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
             
             //LABEL
             width: 3,
-            "line-color": (edge) =>
-              treePath.find((item) => item.id === edge._private.target.id()) ? "#c00" : "#ccc",
-            "target-arrow-color":  (edge) =>
-              treePath.find((item) => item.id === edge._private.target.id()) ? "#c00" : "#ccc",
+            "line-color": (edge) => {
+              const idx = treePath.findIndex((item) => item.id === edge._private.source.id())
+              return idx >= 0 && idx < treePath.length-1 && treePath[idx + 1].id === edge._private.target.id() ? "#c00" : "#ccc"
+            },
+            "target-arrow-color": (edge) => {
+              const idx = treePath.findIndex((item) => item.id === edge._private.source.id())
+              return idx >= 0 && idx < treePath.length-1 && treePath[idx + 1].id === edge._private.target.id() ? "#c00" : "#ccc"
+            },
             "font-family": "Nokia Pure Regular",
             "target-arrow-shape": "triangle",
             label: "data(label)", // Display edge labels

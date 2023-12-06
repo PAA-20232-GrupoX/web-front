@@ -6,7 +6,7 @@ import Quiz from "@/components/quiz";
 import AnimatedGraph from "@/components/graph";
 
 export default function Home() {
-  const [treePath, setTreePath] = useState([{ id: "s1", label: "Start" }]);
+  const [treePath, setTreePath] = useState([{ id: "s1.1", label: "Start" }]);
   const [tree, setTree] = useState([]);
   const [currentNode, setCurrentNode] = useState("s1.1");
   const [finished, setFinished] = useState(false);
