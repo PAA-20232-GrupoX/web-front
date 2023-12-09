@@ -11,7 +11,6 @@ cytoscape.use(dagre);
 const AnimatedGraph = ({ treePath, setTreePath }) => {
   var nodeHtmlLabel = require("cytoscape-node-html-label");
   var expandCollapse = require("cytoscape-expand-collapse");
-  // var contextMenus = require("cytoscape-context-menus");
   var navigator = require("cytoscape-navigator");
   
   if (typeof cytoscape("core", "expandCollapse") === "undefined") {
@@ -20,88 +19,18 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
   if (typeof cytoscape("core", "nodeHtmlLabel") === "undefined") {
     nodeHtmlLabel(cytoscape);
   }
-  // if (typeof cytoscape("core", "contextMenus") === "undefined") {
-  // contextMenus(cytoscape);
-  // }
-  // if (typeof cytoscape("core", "navigator") === "undefined") {
-  // navigator(cytoscape);
-  // }
+  if (typeof cytoscape("core", "navigator") === "undefined") {
+  navigator(cytoscape);
+  }
+
+  var cy = null
   
-  
-  var options = {
-    evtType: "cxttap",
-    menuItems: [
-      {
-        id: "details",
-        content: "View Details...",
-        tooltipText: "View Details",
-        selector: "node, edge",
-        hasTrailingDivider: true
-      },
-      {
-        id: "generateReport",
-        content: "Generate Report",
-        selector: "node, edge",
-        onClickFunction: function () {},
-        hasTrailingDivider: true
-      }
-    ],
-    menuItemClasses: ["custom-menu-item", "custom-menu-item:hover"],
-    // contextMenuClasses: ["custom-context-menu"]
-  };
 
   const cyRef = useRef(null);
   useEffect(() => {
     
-    const cy = cytoscape({
+    cy = cytoscape({
       container: document.getElementById("cy"),
-      
-      // ready: function () {
-      //   var instance = this.contextMenus(options);
-      
-      //   var api = this.expandCollapse({
-      //     layoutBy: {
-      //       name: "dagre",
-      //       animate: "end",
-      //       randomize: false,
-      //       fit: false
-      //     },
-      //     fisheye: false,
-      //     animate: true,
-      //     undoable: false,
-      //     cueEnabled: true,
-      //     expandCollapseCuePosition: "top-left",
-      //     expandCollapseCueSize: 16,
-      //     expandCollapseCueLineSize: 24,
-      //     expandCueImage: "./imgs/ic_expand_more.svg",
-      //     collapseCueImage: "./imgs/ic_expand_less.svg",
-      //     expandCollapseCueSensitivity: 1,
-      //     edgeTypeInfo: "edgeType",
-      //     groupEdgesOfSameTypeOnCollapse: false,
-      //     allowNestedEdgeCollapse: true,
-      //     zIndex: 999
-      //   });
-      
-      //   document
-      //     .getElementById("collapseAll")
-      //     .addEventListener("click", function () {
-      //       api.collapseAll();
-      //     });
-      
-      //   document.getElementById("expandAll").addEventListener("click", function () {
-      //     api.expandAll();
-      //   });
-      
-      //   document
-      //     .getElementById("adminView")
-      //     .addEventListener("click", function () {});
-      //   document
-      //     .getElementById("lifecycleView")
-      //     .addEventListener("click", function () {});
-      //   document
-      //     .getElementById("usageView")
-      //     .addEventListener("click", function () {});
-      // },
       
       style: [
         //CORE
@@ -208,7 +137,7 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
       
       layout: {
         name: "dagre",
-        padding: 24,
+        padding: 0,
         spacingFactor: 1.5
       },
       
@@ -479,7 +408,7 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
       rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
     };
     
-    // var nav = cy.navigator(defaults);
+    var nav = cy.navigator(defaults);
     
     cyRef.current.nodes().forEach((node) => {
       const nodeId = node.id();
