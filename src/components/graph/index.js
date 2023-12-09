@@ -3,12 +3,15 @@ import cytoscape from "cytoscape";
 import dagre from "cytoscape-dagre";
 import "cytoscape-context-menus/cytoscape-context-menus.css";
 import "cytoscape-navigator/cytoscape.js-navigator.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import data from "./data";
 
 cytoscape.use(dagre);
 
 const AnimatedGraph = ({ treePath, setTreePath }) => {
+  const [nodePositions, setNodePositions] = useState([]);
+  const [pan, setPan] = useState({});
+
   var nodeHtmlLabel = require("cytoscape-node-html-label");
   var expandCollapse = require("cytoscape-expand-collapse");
   var navigator = require("cytoscape-navigator");
@@ -22,14 +25,35 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
   if (typeof cytoscape("core", "navigator") === "undefined") {
   navigator(cytoscape);
   }
-
-  var cy = null
   
+  
+  var options = {
+    evtType: "cxttap",
+    menuItems: [
+      {
+        id: "details",
+        content: "View Details...",
+        tooltipText: "View Details",
+        selector: "node, edge",
+        hasTrailingDivider: true
+      },
+      {
+        id: "generateReport",
+        content: "Generate Report",
+        selector: "node, edge",
+        onClickFunction: function () {},
+        hasTrailingDivider: true
+      }
+    ],
+    menuItemClasses: ["custom-menu-item", "custom-menu-item:hover"],
+  };
 
   const cyRef = useRef(null);
+  var currentPositions = null;
+
   useEffect(() => {
-    
-    cy = cytoscape({
+
+    const cy = cytoscape({
       container: document.getElementById("cy"),
       
       style: [
@@ -137,8 +161,8 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
       
       layout: {
         name: "dagre",
-        padding: 0,
-        spacingFactor: 1.5
+        padding: 24,
+        spacingFactor: 1.5,
       },
       
       elements: data,
@@ -150,8 +174,7 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
     
     cyRef.current = cy;
     
-    
-    //cy.fit();
+    // cy.fit();
     //NODE EVENTS
     cy.on("mouseover", "node", function (e) {
       e.target.addClass("hover");
@@ -348,56 +371,6 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
       }
     ]);
     
-    cy.nodes().on("expandcollapse.beforecollapse", function (e) {
-      console.log("Triggered before a node is collapsed");
-    });
-    
-    cy.nodes().on("expandcollapse.aftercollapse", function (e) {
-      console.log("Triggered after a node is collapsed");
-    });
-    
-    cy.nodes().on("expandcollapse.beforeexpand", function (e) {
-      console.log("Triggered before a node is expanded");
-    });
-    
-    cy.nodes().on("expandcollapse.afterexpand", function (e) {
-      console.log("Triggered after a node is expanded");
-    });
-    
-    cy.edges().on("expandcollapse.beforecollapseedge", function (e) {
-      console.log("Triggered before an edge is collapsed");
-    });
-    
-    cy.edges().on("expandcollapse.aftercollapseedge", function (e) {
-      console.log("Triggered after an edge is collapsed");
-    });
-    
-    cy.edges().on("expandcollapse.beforeexpandedge", function (e) {
-      console.log("Triggered before an edge is expanded");
-    });
-    
-    cy.edges().on("expandcollapse.afterexpandedge", function (e) {
-      console.log("Triggered after an edge is expanded");
-    });
-    
-    cy.nodes().on("expandcollapse.beforecollapse", function (event) {
-      var node = this;
-      event.cy
-      .nodes()
-      .filter((entry) => entry.data().parent === node.id())
-      .map((entry) => entry.data("_hidden", "node-hidden"));
-      node.data("_hidden", "");
-    });
-    
-    cy.nodes().on("expandcollapse.afterexpand", function (event) {
-      var node = this;
-      event.cy
-      .nodes()
-      .filter((entry) => entry.data().parent === node.id())
-      .map((entry) => entry.data("_hidden", ""));
-      node.data("_hidden", "node-hidden");
-    });
-    
     var defaults = {
       container: false, // html dom element
       viewLiveFramerate: 0, // set false to update graph pan only on drag end; set 0 to do it instantly; set a number (frames per second) to update not more than N times per second
@@ -407,7 +380,30 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
       removeCustomContainer: false, // destroy the container specified by user on plugin destroy
       rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
     };
-    
+
+    // restore node positions
+    if (nodePositions.length > 0) {
+      nodePositions.forEach(({ id, position }) => {
+        const node = cy.getElementById(id);
+        node.position(position);
+      });
+    }
+
+    // Store current node positions
+    const newNodePositions = cy.nodes().map((node) => ({
+      id: node.id(),
+      position: node.position(),
+    }));
+    setNodePositions((prev) => newNodePositions);
+
+    // restore pan (graph position)
+    if (pan != {}) {
+      cy.pan(pan)
+    }
+    // store pan
+    setPan((prev) => cy.pan());
+
+
     var nav = cy.navigator(defaults);
     
     cyRef.current.nodes().forEach((node) => {
