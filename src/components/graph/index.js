@@ -169,7 +169,8 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
       
       zoomingEnabled: true,
       userZoomingEnabled: true,
-      autoungrabify: false
+      autoungrabify: false,
+      wheelSensitivity: 0.2,
     });
     
     cyRef.current = cy;
