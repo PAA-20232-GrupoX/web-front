@@ -208,7 +208,7 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
             return `<div class="group ${data.collapsedChildren ? "show" : "hide"}">
             <span class="group-graphic alarmSeverity-${data.alarmSeverity}">
             <i class="icon icon-group"></i>
-            <span class="overlay"></span>
+            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')}"></span>
             </span>
             <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
             </div>`;
@@ -226,7 +226,7 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
               data.alarmSeverity
             }">
             <i class="icon icon-group"></i>
-            <span class="overlay"></span>
+            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')})"></span>
             </span>
             <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
             </div>`;
@@ -244,7 +244,7 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
               data.alarmSeverity
             }">
             <i class="icon icon-group"></i>
-            <span class="overlay"></span>
+            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')}"></span>
             </span>
             <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
             </div>`;
@@ -262,7 +262,7 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
               data.alarmSeverity
             }">
             <i class="icon icon-group"></i>
-            <span class="overlay"></span>
+            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')}"></span>
             </span>
             <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
             </div>`;
@@ -287,7 +287,7 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
             ` : ''}
             <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} visited-${enableVisited(data)}">
             <i class="icon icon-${data.kind}" /></i>
-            <span class="overlay"></span>
+            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')}"></span>
             </span>
             <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
             </div>`;
@@ -312,7 +312,7 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
             ` : ''}
             <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} hover visited-${enableVisited(data)}">
             <i class="icon icon-${data.kind} icon-hover" /></i>
-            <span class="overlay"></span>
+            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')}"></span>
             </span>
             <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
             </div>`;
@@ -337,7 +337,7 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
             ` : ''}
             <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} selected visited-${enableVisited(data)}">
             <i class="icon icon-${data.kind}" /></i>
-            <span class="overlay"></span>  
+            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')}"></span>  
             </span>
             <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
             </div>`;
@@ -362,7 +362,7 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
             ` : ''}
             <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} hover selected visited-${enableVisited(data)}">
             <i class="icon icon-${data.kind}" /></i>
-            <span class="overlay"></span>
+            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')}"></span>
             </span>
             <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
             </div>`;
