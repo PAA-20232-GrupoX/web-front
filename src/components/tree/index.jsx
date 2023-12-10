@@ -7,8 +7,7 @@ import { useEffect, useRef } from "react";
 
 cytoscape.use(dagre);
 
-const AnimatedGraph = ({ data, treePath, setTreePath }) => {
-  console.log(data)
+const AnimatedTree = ({ data, treePath, setTreePath }) => {
   var nodeHtmlLabel = require("cytoscape-node-html-label");
   var expandCollapse = require("cytoscape-expand-collapse");
   // var contextMenus = require("cytoscape-context-menus");
@@ -488,8 +487,8 @@ const AnimatedGraph = ({ data, treePath, setTreePath }) => {
       }
     });
 
-  }, [treePath]);
+  }, [treePath, data]);
   
 }
 
-export default AnimatedGraph;
+export default AnimatedTree;
