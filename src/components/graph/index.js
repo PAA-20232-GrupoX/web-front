@@ -9,7 +9,7 @@ import data from "./data";
 cytoscape.use(dagre);
 
 const AnimatedGraph = ({ treePath, setTreePath }) => {
-  const [nodePositions, setNodePositions] = useState([]);
+  const [changedNodes, setChangedNodes] = useState([]);
   const [pan, setPan] = useState({});
 
   var nodeHtmlLabel = require("cytoscape-node-html-label");
@@ -55,7 +55,6 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
 
     const cy = cytoscape({
       container: document.getElementById("cy"),
-      
       style: [
         //CORE
         {
@@ -121,17 +120,22 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
           style: {
             width: 1,
             "line-color": "#b8b8b8",
-            "curve-style": "bezier",
-            
             //LABEL
             width: 3,
             "line-color": (edge) => {
-              const idx = treePath.findIndex((item) => item.id === edge._private.source.id())
-              return idx >= 0 && idx < treePath.length-1 && treePath[idx + 1].id === edge._private.target.id() ? "#c00" : "#ccc"
+              // atualizar a cor das arestas de acordo com treePath
+              if (treePath !== undefined) {
+                const idx = treePath.findIndex((item) => item.id === edge._private.source.id())
+                return idx >= 0 && idx < treePath.length-1 && treePath[idx + 1].id === edge._private.target.id() ? "#c00" : "#ccc"
+              }
+              return "#ccc"
             },
             "target-arrow-color": (edge) => {
-              const idx = treePath.findIndex((item) => item.id === edge._private.source.id())
-              return idx >= 0 && idx < treePath.length-1 && treePath[idx + 1].id === edge._private.target.id() ? "#c00" : "#ccc"
+              if (treePath !== undefined) {
+                const idx = treePath.findIndex((item) => item.id === edge._private.source.id())
+                return idx >= 0 && idx < treePath.length-1 && treePath[idx + 1].id === edge._private.target.id() ? "#c00" : "#ccc"
+              }
+              return "#ccc"
             },
             "font-family": "Nokia Pure Regular",
             "target-arrow-shape": "triangle",
@@ -174,7 +178,8 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
     });
     
     cyRef.current = cy;
-    
+
+    cytoscape.warnings(true)
     // cy.fit();
     //NODE EVENTS
     cy.on("mouseover", "node", function (e) {
@@ -182,6 +187,14 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
     });
     cy.on("mouseout", "node", function (e) {
       e.target.removeClass("hover");
+    });
+
+    cy.on("mouseup", "node", function (e) {
+      e.target.addClass("hover");
+      setChangedNodes((prevNodes) => {
+        const updatedNodes = [...prevNodes, this];
+        return updatedNodes;
+      });
     });
     
     cy.on("mousedown", "node", function (e) {
@@ -198,6 +211,8 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
     cy.on("mouseout", "edge", function (e) {
       e.target.removeClass("hover");
     });
+    
+    const enableVisited = function(data) { return treePath !== undefined ? data.visited : "No" }
     
     cy.nodeHtmlLabel([
       {
@@ -287,7 +302,7 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
           <span> &nbsp;${data.probability}</span> \
           </span> \
           ` : ''}
-          <span class="element-graphic-${data.type} visited-${data.visited}">
+          <span class="element-graphic-${data.type} visited-${enableVisited(data)}">
           <i class="icon icon-${data.kind}" /></i>
           <span class="overlay"></span>
           </span>
@@ -312,7 +327,7 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
           <span> &nbsp;${data.probability}</span> \
           </span> \
           ` : ''}
-          <span class="element-graphic-${data.type} hover visited-${data.visited}">
+          <span class="element-graphic-${data.type} hover visited-${enableVisited(data)}">
           <i class="icon icon-${data.kind} icon-hover" /></i>
           <span class="overlay"></span>
           </span>
@@ -337,7 +352,7 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
           <span> &nbsp;${data.probability}</span> \
           </span> \
           ` : ''}
-          <span class="element-graphic-${data.type} selected visited-${data.visited}">
+          <span class="element-graphic-${data.type} selected visited-${enableVisited(data)}">
           <i class="icon icon-${data.kind}" /></i>
           <span class="overlay"></span>  
           </span>
@@ -362,7 +377,7 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
           <span>&nbsp;${data.probability}</span> \
           </span> \
           ` : ''}
-          <span class="element-graphic-${data.type} hover selected visited-${data.visited}">
+          <span class="element-graphic-${data.type} hover selected visited-${enableVisited(data)}">
           <i class="icon icon-${data.kind}" /></i>
           <span class="overlay"></span>
           </span>
@@ -382,20 +397,18 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
       rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
     };
 
-    // restore node positions
-    if (nodePositions.length > 0) {
-      nodePositions.forEach(({ id, position }) => {
-        const node = cy.getElementById(id);
-        node.position(position);
-      });
-    }
-
     // Store current node positions
-    const newNodePositions = cy.nodes().map((node) => ({
+    const newNodePositions = changedNodes.map((node) => ({
       id: node.id(),
       position: node.position(),
     }));
-    setNodePositions((prev) => newNodePositions);
+
+    // restore node positions
+    newNodePositions.forEach(({ id, position }) => {
+      const node = cy.getElementById(id);
+      node.position(position);
+    });
+
 
     // restore pan (graph position)
     if (pan != {}) {
@@ -409,7 +422,7 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
     
     cyRef.current.nodes().forEach((node) => {
       const nodeId = node.id();
-      if (treePath.find((item) => item.id === nodeId) !== undefined) {
+      if (treePath !== undefined && treePath.find((item) => item.id === nodeId) !== undefined) {
         node._private.data.visited = "Yes"
       }
     });

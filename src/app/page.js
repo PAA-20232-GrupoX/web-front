@@ -48,7 +48,7 @@ export default function Home() {
       { data: { group: "edges", label:"sim", source: "s2.3", target: "s4.4" } },
       { data: { group: "edges", label:"não", source: "s2.3", target: "s4.1" } },
       { data: { group: "edges", label:"sim", source: "s4.4", target: "c5.2" } },
-      { data: { group: "edges", label:"sim", source: "s4.4", target: "c1.3" } },
+      { data: { group: "edges", label:"não", source: "s4.4", target: "c1.3" } },
     ])
   }, []);
 
