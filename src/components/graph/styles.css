@@ -141,28 +141,9 @@ body {
   box-shadow: 0 0 1px 0 rgb(0, 0, 0, 0.12), 0 1px 1px 0 rgb(0, 0, 0, 0.24);
 }
 
-.element-graphic-Symptom {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  border: 4px solid rgb(255, 255, 255, 1);
-  box-shadow: 0 0 1px 0 rgb(0, 0, 0, 0.12), 0 1px 1px 0 rgb(0, 0, 0, 0.24);
-}
-
-.element-graphic-Mixed {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  border: 4px solid rgb(255, 255, 255, 1);
-  box-shadow: 0 0 1px 0 rgb(0, 0, 0, 0.12), 0 1px 1px 0 rgb(0, 0, 0, 0.24);
-}
-
+.element-graphic-Symptom,
+.element-graphic-Root,
+.element-graphic-Association,
 .element-graphic-Cause {
   display: inline-flex;
   justify-content: center;
@@ -170,7 +151,7 @@ body {
   border-radius: 50%;
   width: 38px;
   height: 38px;
-  border: 4px solid rgb(108, 223, 255);
+  border: 4px solid rgb(255, 255, 255, 1);
   box-shadow: 0 0 1px 0 rgb(0, 0, 0, 0.12), 0 1px 1px 0 rgb(0, 0, 0, 0.24);
 }
 
@@ -190,6 +171,15 @@ body {
   height: 38px;
 }
 
+.element-graphic-Root.hover > .overlay {
+  position: absolute;
+  background-color: #000000;
+  opacity: 0.3;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+}
+
 .element-graphic-Cause.hover > .overlay {
   position: absolute;
   background-color: #000000;
@@ -199,7 +189,7 @@ body {
   height: 38px;
 }
 
-.element-graphic-Mixed.hover > .overlay {
+.element-graphic-Association.hover > .overlay {
   position: absolute;
   background-color: #000000;
   opacity: 0.3;
@@ -218,15 +208,21 @@ body {
   height: 76px;
 }
 
-.element-graphic-Mixed.hover > .overlay-large {
+.element-graphic-Root.hover > .overlay-large {
+  width: 76px;
+  height: 76px;
+}
+
+.element-graphic-Association.hover > .overlay-large {
   width: 76px;
   height: 76px;
 }
 
 
-.element-graphic-Symptom.selected
-.element-graphic-Cause.selected
-.element-graphic-Mixed.selected {
+.element-graphic-Symptom.selected,
+.element-graphic-Root.selected,
+.element-graphic-Cause.selected,
+.element-graphic-Association.selected {
   box-shadow: 0 0 0px 2px #5da4ef;
   border: 4px solid rgb(255, 255, 255, 1);
 }
@@ -239,7 +235,7 @@ body {
 .element-label {
   font-family: "Nokia Pure Regular";
   color: rgb(0, 0, 0, 0.87);
-  max-width: 75px;
+  max-width: 175px;
   overflow: hidden;
   text-overflow: ellipsis;
   text-transform: capitalize;
@@ -316,11 +312,15 @@ body {
   -webkit-mask-image: url(./imgs/ic_symptom.svg);
 }
 
-.icon-Mixed {
-  mask-image: url(./imgs/ic_symptom.svg);
-  -webkit-mask-image: url(./imgs/ic_symptom.svg);
+.icon-Root {
+  mask-image: url(./imgs/ic_empty.svg);
+  -webkit-mask-image: url(./imgs/ic_empty.svg);
 }
 
+.icon-Association {
+  mask-image: url(./imgs/ic_association.svg);
+  -webkit-mask-image: url(./imgs/ic_association.svg);
+}
 
 .icon-Cause {
   mask-image: url(./imgs/ic_cause.svg);

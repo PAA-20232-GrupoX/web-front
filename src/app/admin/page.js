@@ -11,14 +11,18 @@ function dataToGraph(dictData) {
   for (var value of dictData['']) {
     symptoms[value[0]] = true
   }
-  console.log(symptoms)
 
   // nodes
   for (var key in dictData) {
     var id = key.replaceAll(' ', '_')
-    var type = symptoms[key] ? "Symptom" : "Cause"
-    type = key.match(".*;.*") !== null ? "Mixed" : type
-
+    var type = ""
+    if (key.length == 0) {
+      type = "Root"
+    } else {
+      type = symptoms[key] ? "Symptom" : "Cause"
+      type = key.match(".*;.*") !== null ? "Association" : type
+    }
+   
     var node = {}
     node.group = "nodes"
     node.data = {
@@ -39,14 +43,14 @@ function dataToGraph(dictData) {
     for (var value of dictData[key]) {
       
       if (value[0] !== '!') {
-        value[0] = value[0].replaceAll(' ', '_')
+        var target = value[0].replaceAll(' ', '_')
 
         var edge = {}
         edge.data = {
           group: "edges",
           label: value[1].toFixed(2).toString(),
           source: node.data.id,
-          target: value[0]
+          target: target
         }
         graph.push(edge)
       }
@@ -74,18 +78,19 @@ export default function Admin() {
     }
 
     // comente para ver o grafo mais simples, senão sobrescreve com o grafo do arquivo graphFile.js
-    // data = biggerGraph;
+    data = biggerGraph;
 
     setGraph(dataToGraph(data))
-    console.log("graph set")
   },  []);
 
   return (
     <main className="w-full h-full bg-bglight">
       <Header title="PAA 4" />
-      <div id="cy" className="flex justify-center items-center w-2/4">
-          <AnimatedGraph data={graph} setData={setGraph}/>
+      <div className="flex h-5/6">
+        <div id="cy" className="flex justify-center items-center w-2/4">
+            <AnimatedGraph data={graph} setData={setGraph}/>
         </div>
+      </div>
     </main>
   );
 }

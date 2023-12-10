@@ -4,6 +4,7 @@ import dagre from "cytoscape-dagre";
 import "cytoscape-context-menus/cytoscape-context-menus.css";
 import "cytoscape-navigator/cytoscape.js-navigator.css";
 import { useEffect, useRef, useState } from "react";
+import InfoBox from "../info";
 
 cytoscape.use(dagre);
 
@@ -11,6 +12,8 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
   var nodeHtmlLabel = require("cytoscape-node-html-label");
   var expandCollapse = require("cytoscape-expand-collapse");
   var navigator = require("cytoscape-navigator");
+
+  const [currentNode, setCurrentNode] = useState(null);
   
   if (typeof cytoscape("core", "expandCollapse") === "undefined") {
     expandCollapse(cytoscape);
@@ -19,7 +22,7 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
     nodeHtmlLabel(cytoscape);
   }
   if (typeof cytoscape("core", "navigator") === "undefined") {
-  navigator(cytoscape);
+    navigator(cytoscape);
   }
 
   
@@ -48,7 +51,7 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
   var currentPositions = null;
 
   useEffect(() => {
-    const enableVisited = function (data) { return treePath !== undefined ? data.visited : "No" }
+    const enableVisited = function (node) { return treePath !== undefined ? node.visited : "No" }
     const textIfLarge = function (large) { return data.length > 100 ? large : '' }
 
     if (data.length > 0 && !cyRef.current) {
@@ -137,14 +140,16 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
             selector: "edge.hover",
             style: {
               width: 2,
-              "line-color": "#239df9"
+              "line-color": "#239df9",
+              "target-arrow-color": "#239df9"
             }
           },
           {
             selector: "edge:selected",
             style: {
               width: 3,
-              "line-color": "#239df9"
+              "line-color": "#239df9",
+              "target-arrow-color": "#239df9"
             }
           }
         ],
@@ -187,6 +192,7 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
       });
       cyRef.current.on("click", "node", function (e) {
         console.log("clicked:", this);
+        setCurrentNode(this);
       });
       
       //EDGES EVENTS
@@ -397,15 +403,18 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
             "line-color",
             color
           );
-          edge.style(
-            "target-arrow-color",
-            color
-          );
         }
       });
     }
 
   }, [treePath, data]);
+
+  return (
+    <div>
+      <InfoBox node={currentNode} setNode={setCurrentNode} />
+      <div id="cy" style={{ height: "100vh", width: "100%" }} />
+    </div>
+  );
   
 }
 
