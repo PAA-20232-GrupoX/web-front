@@ -48,6 +48,9 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
   var currentPositions = null;
 
   useEffect(() => {
+    const enableVisited = function (data) { return treePath !== undefined ? data.visited : "No" }
+    const textIfLarge = function (large) { return data.length > 100 ? large : '' }
+
     if (data.length > 0 && !cyRef.current) {
       const cy = cytoscape({
         container: document.getElementById("cy"),
@@ -64,8 +67,8 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
           {
             selector: "node",
             css: {
-              width: "38px",
-              height: "38px",
+              width: textIfLarge("76px", "38px"),
+              height: textIfLarge("76px", "38px"),
               "font-family": "Nokia Pure Regular",
               "background-opacity": "1"
             }
@@ -140,7 +143,7 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
           {
             selector: "edge:selected",
             style: {
-              width: 1,
+              width: 3,
               "line-color": "#239df9"
             }
           }
@@ -183,7 +186,7 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
         e.target.addClass("hover");
       });
       cyRef.current.on("click", "node", function (e) {
-        console.log("clicked:" + this.id());
+        console.log("clicked:", this);
       });
       
       //EDGES EVENTS
@@ -194,9 +197,6 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
         e.target.removeClass("hover");
       });
       
-      const enableVisited = function (data) { return treePath !== undefined ? data.visited : "No" }
-      const changeIfLarge = function (large, normal) { return data.length > 100 ? large : normal }
-
       cyRef.current.nodeHtmlLabel([
         {
           query: ".groupIcon",
@@ -207,10 +207,10 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
           tpl: function (data) {
             return `<div class="group ${data.collapsedChildren ? "show" : "hide"}">
             <span class="group-graphic alarmSeverity-${data.alarmSeverity}">
-            <i class="icon icon-group"></i>
-            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')}"></span>
+            <i class="icon ${textIfLarge("icon-large", "")} icon-group"></i>
+            <span class="overlay ${textIfLarge('overlay-large')}"></span>
             </span>
-            <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            <span class="group-label ${textIfLarge('label-large')}">${data.displayName}</span>
             </div>`;
           }
         },
@@ -225,10 +225,10 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
             <span class="group-graphic hover alarmSeverity-${
               data.alarmSeverity
             }">
-            <i class="icon icon-group"></i>
-            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')})"></span>
+            <i class="icon overlay-larg} icon-group"></i>
+            <span class="overlay ${textIfLarge('overlay-large')})"></span>
             </span>
-            <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            <span class="group-label ${textIfLarge('label-large')}">${data.displayName}</span>
             </div>`;
           }
         },
@@ -243,10 +243,10 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
             <span class="group-graphic selected alarmSeverity-${
               data.alarmSeverity
             }">
-            <i class="icon icon-group"></i>
-            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')}"></span>
+            <i class="icon ${textIfLarge("icon-large", "")} icon-group"></i>
+            <span class="overlay ${textIfLarge('overlay-large')}"></span>
             </span>
-            <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            <span class="group-label ${textIfLarge('label-large')}">${data.displayName}</span>
             </div>`;
           }
         },
@@ -258,13 +258,11 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
           valignBox: "center",
           tpl: function (data) {
             return `<div class="group ${data.collapsedChildren ? "show" : "hide"}">
-            <span class="group-graphic hover selected alarmSeverity-${
-              data.alarmSeverity
-            }">
-            <i class="icon icon-group"></i>
-            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')}"></span>
+            <span class="group-graphic hover selected alarmSeverity-${data.alarmSeverity}">
+            <i class="icon ${textIfLarge("icon-large", "")} icon-group"></i>
+            <span class="overlay ${textIfLarge('overlay-large')}"></span>
             </span>
-            <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            <span class="group-label ${textIfLarge('label-large')}">${data.displayName}</span>
             </div>`;
           }
         },
@@ -275,21 +273,21 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
           halignBox: "center",
           valignBox: "center",
           tpl: function (data) {
-            return `<div class="element ${data._hidden}">
+            return `<div class="element ${textIfLarge("element-large", "")} ${data._hidden}">
             <span class="element-severity_badge">
-            <i class="icon icon-${data.alarmSeverity}" /></i>
+            <i class="icon ${textIfLarge("icon-large", "")} icon-${data.alarmSeverity}" /></i>
             </span>
             ${data.probability !== undefined ? `\
             <span class="element-probability"> \
-            <i class="icon icon-probability" /></i> \
+            <i class="icon ${textIfLarge("icon-large", "")} icon-probability" /></i> \
             <span> &nbsp;${data.probability}</span> \
             </span> \
             ` : ''}
-            <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} visited-${enableVisited(data)}">
-            <i class="icon icon-${data.kind}" /></i>
-            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')}"></span>
+            <span class="element-graphic-${data.type} ${textIfLarge('graphic-large')} visited-${enableVisited(data)}">
+            <i class="icon ${textIfLarge("icon-large", "")} icon-${data.type}" /></i>
+            <span class="overlay ${textIfLarge('overlay-large')}"></span>
             </span>
-            <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            <span title="${data.displayName}" class="element-label ${textIfLarge('label-large')}">${data.displayName}</span>
             </div>`;
           }
         },
@@ -300,21 +298,21 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
           halignBox: "center",
           valignBox: "center",
           tpl: function (data) {
-            return `<div class="element ${data._hidden}">
+            return `<div class="element ${textIfLarge("element-large", "")} ${data._hidden}">
             <span class="element-severity_badge">
-            <i class="icon icon-${data.alarmSeverity}" /></i>
+            <i class="icon ${textIfLarge("icon-large", "")} icon-${data.alarmSeverity}" /></i>
             </span>
             ${data.probability !== undefined ? `\
             <span class="element-probability"> \
-            <i class="icon icon-probability" /></i> \
+            <i class="icon ${textIfLarge("icon-large", "")} icon-probability" /></i> \
             <span> &nbsp;${data.probability}</span> \
             </span> \
             ` : ''}
-            <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} hover visited-${enableVisited(data)}">
-            <i class="icon icon-${data.kind} icon-hover" /></i>
-            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')}"></span>
+            <span class="element-graphic-${data.type} ${textIfLarge('graphic-large')} hover visited-${enableVisited(data)}">
+            <i class="icon ${textIfLarge("icon-large", "")} icon-${data.type} icon-hover" /></i>
+            <span class="overlay ${textIfLarge('overlay-large')}"></span>
             </span>
-            <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            <span title="${data.displayName}" class="element-label ${textIfLarge('label-large')}">${data.displayName}</span>
             </div>`;
           }
         },
@@ -325,21 +323,21 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
           halignBox: "center",
           valignBox: "center",
           tpl: function (data) {
-            return `<div class="element ${data._hidden}">
+            return `<div class="element ${textIfLarge("element-large", "")} ${data._hidden}">
             <span class="element-severity_badge">
-            <i class="icon icon-${data.alarmSeverity}" /></i>
+            <i class="icon ${textIfLarge("icon-large", "")} icon-${data.alarmSeverity}" /></i>
             </span>
             ${data.probability !== undefined ? `\
             <span class="element-probability"> \
-            <i class="icon icon-probability" /></i> \
+            <i class="icon ${textIfLarge("icon-large", "")} icon-probability" /></i> \
             <span> &nbsp;${data.probability}</span> \
             </span> \
             ` : ''}
-            <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} selected visited-${enableVisited(data)}">
-            <i class="icon icon-${data.kind}" /></i>
-            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')}"></span>  
+            <span class="element-graphic-${data.type} ${textIfLarge('graphic-large')} selected visited-${enableVisited(data)}">
+            <i class="icon ${textIfLarge("icon-large", "")} icon-${data.type}" /></i>
+            <span class="overlay ${textIfLarge('overlay-large')}"></span>  
             </span>
-            <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            <span title="${data.displayName}" class="element-label ${textIfLarge('label-large')}">${data.displayName}</span>
             </div>`;
           }
         },
@@ -350,21 +348,21 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
           halignBox: "center",
           valignBox: "center",
           tpl: function (data) {
-            return `<div class="element ${data._hidden}">
+            return `<div class="element ${textIfLarge("element-large", "")} ${data._hidden}">
             <span class="element-severity_badge">
-            <i class="icon icon-${data.alarmSeverity}" /></i>
+            <i class="icon ${textIfLarge("icon-large", "")} icon-${data.alarmSeverity}" /></i>
             </span>
             ${data.probability !== undefined ? `\
             <span class="element-probability"> \
-            <i class="icon icon-probability" /></i> \
+            <i class="icon ${textIfLarge("icon-large", "")} icon-probability" /></i> \
             <span>&nbsp;${data.probability}</span> \
             </span> \
             ` : ''}
-            <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} hover selected visited-${enableVisited(data)}">
-            <i class="icon icon-${data.kind}" /></i>
-            <span class="overlay ${changeIfLarge('overlay-large', 'overlay-normal')}"></span>
+            <span class="element-graphic-${data.type} ${textIfLarge('graphic-large')} hover selected visited-${enableVisited(data)}">
+            <i class="icon ${textIfLarge("icon-large", "")} icon-${data.type}" /></i>
+            <span class="overlay ${textIfLarge('overlay-large')}"></span>
             </span>
-            <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            <span title="${data.displayName}" class="element-label ${textIfLarge('label-large')}">${data.displayName}</span>
             </div>`;
           }
         }
@@ -392,19 +390,18 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
 
       cyRef.current.edges().forEach((edge) => {
         const edgeId = edge.id();
-        var color = "#ccc";
         if (treePath !== undefined && treePath.length > 0) {
           const idx = treePath.findIndex((item) => item.id === edge._private.source.id())
-          color = idx >= 0 && idx < treePath.length-1 && treePath[idx + 1].id === edge._private.target.id() ? "#c00" : "#ccc"
+          var color = idx >= 0 && idx < treePath.length-1 && treePath[idx + 1].id === edge._private.target.id() ? "#c00" : "#ccc"
+          edge.style(
+            "line-color",
+            color
+          );
+          edge.style(
+            "target-arrow-color",
+            color
+          );
         }
-        edge.style(
-          "line-color",
-          color
-        );
-        edge.style(
-          "target-arrow-color",
-          color
-        );
       });
     }
 

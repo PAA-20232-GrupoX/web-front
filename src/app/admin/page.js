@@ -6,18 +6,25 @@ import { useEffect, useState } from "react";
 
 function dataToGraph(dictData) {
   var graph = []
-  
+
+  var symptoms = {}
+  for (var value of dictData['']) {
+    symptoms[value[0]] = true
+  }
+  console.log(symptoms)
+
   // nodes
   for (var key in dictData) {
-    key = key.replaceAll(' ', '_')
-    var display = key.replaceAll('c_', '').replaceAll('s_', '')
+    var id = key.replaceAll(' ', '_')
+    var type = symptoms[key] ? "Symptom" : "Cause"
+    type = key.match(".*;.*") !== null ? "Mixed" : type
 
     var node = {}
     node.group = "nodes"
     node.data = {
-      id: key.length != 0 ? key : 'start',
-      displayName: key.length != 0 ? display : 'start',
-      type: (key[0] === 's' || key.length == 0) ? "Symptom" : "Cause",
+      id: key.length != 0 ? id : 'start',
+      displayName: key.length != 0 ? key : 'start',
+      type: type,
       kind: "NetworkService",
       visited: "No",
       alarmSeverity: "cleared"
@@ -56,18 +63,18 @@ export default function Admin() {
   useEffect (() => {
     // grafo recebido do back
     var data = {
-    's a': [['c x', 0.6], ['s a;s b', 0.7], ['s a;s c', 0.5]],
-    's b': [['c x', 0.9], ['s a;s b', 0.7]],
-    's a;s c': [['c y', 0.5]],
-    's a;s b': [['c y', 0.7]],
-    's c': [['s a;s c', 0.5]],
-    '': [['s b', 1.6], ['s c', 0.5], ['s a', 1.8]],
-    'c x': [['!', 0.0]],
-    'c y': [['!', 0.0]]
+    'a': [['x', 0.6], ['a;b', 0.7], ['a;c', 0.5]],
+    'b': [['x', 0.9], ['a;b', 0.7]],
+    'a;c': [['y', 0.5]],
+    'a;b': [['y', 0.7]],
+    'c': [['a;c', 0.5]],
+    '': [['b', 1.6], ['c', 0.5], ['a', 1.8]],
+    'x': [['!', 0.0]],
+    'y': [['!', 0.0]]
     }
 
     // comente para ver o grafo mais simples, senão sobrescreve com o grafo do arquivo graphFile.js
-    data = biggerGraph;
+    // data = biggerGraph;
 
     setGraph(dataToGraph(data))
     console.log("graph set")
