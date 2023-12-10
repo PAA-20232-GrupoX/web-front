@@ -8,8 +8,6 @@ import { useEffect, useRef, useState } from "react";
 cytoscape.use(dagre);
 
 const AnimatedGraph = ({ data, treePath, setTreePath }) => {
-  const [changedNodes, setChangedNodes] = useState([]);
-  const [pan, setPan] = useState({});
 
   var nodeHtmlLabel = require("cytoscape-node-html-label");
   var expandCollapse = require("cytoscape-expand-collapse");
@@ -25,8 +23,6 @@ const AnimatedGraph = ({ data, treePath, setTreePath }) => {
   navigator(cytoscape);
   }
 
-  console.log("lenth: ", data.length)
-  
   
   var options = {
     evtType: "cxttap",
@@ -53,170 +49,154 @@ const AnimatedGraph = ({ data, treePath, setTreePath }) => {
   var currentPositions = null;
 
   useEffect(() => {
-
-    const cy = cytoscape({
-      container: document.getElementById("cy"),
-      style: [
-        //CORE
-        {
-          selector: "core",
-          css: {
-            "active-bg-size": 0 //The size of the active background indicator.
+    if (!cyRef.current) {
+      const cy = cytoscape({
+        container: document.getElementById("cy"),
+        style: [
+          //CORE
+          {
+            selector: "core",
+            css: {
+              "active-bg-size": 0 //The size of the active background indicator.
+            }
+          },
+          
+          //NODE
+          {
+            selector: "node",
+            css: {
+              width: "38px",
+              height: "38px",
+              "font-family": "Nokia Pure Regular",
+              "background-opacity": "1"
+            }
+          },
+          //GROUP
+          {
+            selector: "node.cy-expand-collapse-collapsed-node",
+            css: {
+              width: "56px",
+              height: "56px",
+              "background-opacity": "0",
+              "font-family": "Nokia Pure Regular"
+            }
+          },
+          {
+            selector: "$node > node",
+            css: {
+              "background-color": "#fff",
+              "background-opacity": "1",
+              "border-width": "1px",
+              "border-color": "#dcdcdc",
+              
+              //LABEL
+              //label: "data(name)",
+              color: "#000",
+              shape: "rectangle",
+              "text-opacity": "0.56",
+              "font-size": "10px",
+              "text-transform": "uppercase",
+              "text-wrap": "none",
+              "text-max-width": "75px",
+              "padding-top": "16px",
+              "padding-left": "16px",
+              "padding-bottom": "16px",
+              "padding-right": "16px"
+            }
+          },
+          {
+            selector: ":parent",
+            css: {
+              "text-valign": "top",
+              "text-halign": "center"
+            }
+          },
+          //EDGE
+          {
+            selector: "edge",
+            style: {
+              width: 1,
+              "line-color": "#b8b8b8",
+              //LABEL
+              width: 3,
+              "line-color": "#ccc",
+              "target-arrow-color": "#ccc",
+              "font-family": "Nokia Pure Regular",
+              "target-arrow-shape": "triangle",
+              label: "data(label)", // Display edge labels
+              "text-rotation": "autorotate",
+              "text-background-opacity": 1,
+              "text-background-color": "#fff",
+              "text-background-padding": "3px",
+              "curve-style": "bezier",
+            }
+          },
+          {
+            selector: "edge.hover",
+            style: {
+              width: 2,
+              "line-color": "#239df9"
+            }
+          },
+          {
+            selector: "edge:selected",
+            style: {
+              width: 1,
+              "line-color": "#239df9"
+            }
           }
+        ],
+        
+        layout: {
+          name: "dagre",
+          padding: 24,
+          spacingFactor: data.length*8/1000 + 4/3,  // espacamento de acordo com o tamanho do grafo
         },
         
-        //NODE
-        {
-          selector: "node",
-          css: {
-            width: "38px",
-            height: "38px",
-            "font-family": "Nokia Pure Regular",
-            "background-opacity": "1"
-          }
-        },
-        //GROUP
-        {
-          selector: "node.cy-expand-collapse-collapsed-node",
-          css: {
-            width: "56px",
-            height: "56px",
-            "background-opacity": "0",
-            "font-family": "Nokia Pure Regular"
-          }
-        },
-        {
-          selector: "$node > node",
-          css: {
-            "background-color": "#fff",
-            "background-opacity": "1",
-            "border-width": "1px",
-            "border-color": "#dcdcdc",
-            
-            //LABEL
-            //label: "data(name)",
-            color: "#000",
-            shape: "rectangle",
-            "text-opacity": "0.56",
-            "font-size": "10px",
-            "text-transform": "uppercase",
-            "text-wrap": "none",
-            "text-max-width": "75px",
-            "padding-top": "16px",
-            "padding-left": "16px",
-            "padding-bottom": "16px",
-            "padding-right": "16px"
-          }
-        },
-        {
-          selector: ":parent",
-          css: {
-            "text-valign": "top",
-            "text-halign": "center"
-          }
-        },
-        //EDGE
-        {
-          selector: "edge",
-          style: {
-            width: 1,
-            "line-color": "#b8b8b8",
-            //LABEL
-            width: 3,
-            "line-color": (edge) => {
-              // atualizar a cor das arestas de acordo com treePath
-              if (treePath !== undefined) {
-                const idx = treePath.findIndex((item) => item.id === edge._private.source.id())
-                return idx >= 0 && idx < treePath.length-1 && treePath[idx + 1].id === edge._private.target.id() ? "#c00" : "#ccc"
-              }
-              return "#ccc"
-            },
-            "target-arrow-color": (edge) => {
-              if (treePath !== undefined) {
-                const idx = treePath.findIndex((item) => item.id === edge._private.source.id())
-                return idx >= 0 && idx < treePath.length-1 && treePath[idx + 1].id === edge._private.target.id() ? "#c00" : "#ccc"
-              }
-              return "#ccc"
-            },
-            "font-family": "Nokia Pure Regular",
-            "target-arrow-shape": "triangle",
-            label: "data(label)", // Display edge labels
-            "text-rotation": "autorotate",
-            "text-background-opacity": 1,
-            "text-background-color": "#fff",
-            "text-background-padding": "3px",
-            "curve-style": "bezier",
-          }
-        },
-        {
-          selector: "edge.hover",
-          style: {
-            width: 2,
-            "line-color": "#239df9"
-          }
-        },
-        {
-          selector: "edge:selected",
-          style: {
-            width: 1,
-            "line-color": "#239df9"
-          }
-        }
-      ],
+        elements: data,
+        
+        zoomingEnabled: true,
+        userZoomingEnabled: true,
+        autoungrabify: false,
+        wheelSensitivity: 0.2,
+      });
       
-      layout: {
-        name: "dagre",
-        padding: 24,
-        spacingFactor: data.length*8/1000 + 4/3,  // espacamento de acordo com o tamanho do grafo
-      },
-      
-      elements: data,
-      
-      zoomingEnabled: true,
-      userZoomingEnabled: true,
-      autoungrabify: false,
-      wheelSensitivity: 0.2,
-    });
-    
-    cyRef.current = cy;
+      cyRef.current = cy;
+    }
 
     cytoscape.warnings(true)
     // cy.fit();
     //NODE EVENTS
-    cy.on("mouseover", "node", function (e) {
+    cyRef.current.on("mouseover", "node", function (e) {
       e.target.addClass("hover");
     });
-    cy.on("mouseout", "node", function (e) {
+    cyRef.current.on("mouseout", "node", function (e) {
       e.target.removeClass("hover");
     });
 
-    cy.on("mouseup", "node", function (e) {
+    cyRef.current.on("mouseup", "node", function (e) {
       e.target.addClass("hover");
-      setChangedNodes((prevNodes) => {
-        const updatedNodes = [...prevNodes, this];
-        return updatedNodes;
-      });
     });
     
-    cy.on("mousedown", "node", function (e) {
+    cyRef.current.on("mousedown", "node", function (e) {
       e.target.addClass("hover");
     });
-    cy.on("click", "node", function (e) {
+    cyRef.current.on("click", "node", function (e) {
       console.log("clicked:" + this.id());
     });
     
     //EDGES EVENTS
-    cy.on("mouseover", "edge", function (e) {
+    cyRef.current.on("mouseover", "edge", function (e) {
       e.target.addClass("hover");
     });
-    cy.on("mouseout", "edge", function (e) {
+    cyRef.current.on("mouseout", "edge", function (e) {
       e.target.removeClass("hover");
     });
     
     const enableVisited = function (data) { return treePath !== undefined ? data.visited : "No" }
     const changeIfLarge = function (large, normal) { return data.length > 100 ? large : normal }
 
-    cy.nodeHtmlLabel([
+    cyRef.current.nodeHtmlLabel([
       {
         query: ".groupIcon",
         halign: "center",
@@ -399,34 +379,31 @@ const AnimatedGraph = ({ data, treePath, setTreePath }) => {
       rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
     };
 
-    // Store current node positions
-    const newNodePositions = changedNodes.map((node) => ({
-      id: node.id(),
-      position: node.position(),
-    }));
 
-    // restore node positions
-    newNodePositions.forEach(({ id, position }) => {
-      const node = cy.getElementById(id);
-      node.position(position);
-    });
-
-
-    // restore pan (graph position)
-    if (pan != {}) {
-      cy.pan(pan)
-    }
-    // store pan
-    setPan((prev) => cy.pan());
-
-
-    var nav = cy.navigator(defaults);
+    var nav = cyRef.current.navigator(defaults);
     
     cyRef.current.nodes().forEach((node) => {
       const nodeId = node.id();
       if (treePath !== undefined && treePath.find((item) => item.id === nodeId) !== undefined) {
         node._private.data.visited = "Yes"
       }
+    });
+
+    cyRef.current.edges().forEach((edge) => {
+      const edgeId = edge.id();
+      var color = "#ccc";
+      if (treePath !== undefined && treePath.length > 0) {
+        const idx = treePath.findIndex((item) => item.id === edge._private.source.id())
+        color = idx >= 0 && idx < treePath.length-1 && treePath[idx + 1].id === edge._private.target.id() ? "#c00" : "#ccc"
+      }
+      edge.style(
+        "line-color",
+        color
+      );
+      edge.style(
+        "target-arrow-color",
+        color
+      );
     });
 
   }, [treePath]);

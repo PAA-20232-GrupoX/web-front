@@ -1,7 +1,7 @@
 "use client"
 import Header from "@/components/header";
 import AnimatedGraph from "@/components/graph";
-import graphFile from "@/app/admin/graphFile"
+import biggerGraph from "@/app/admin/graphFile"
 
 function dataToGraph(dictData) {
   var graph = []
@@ -63,12 +63,11 @@ export default function Admin() {
   'c y': [['!', 0.0]]
   }
 
-  data = graphFile;
+  // comente para ver o grafo mais simples, senão sobrescreve com o grafo do arquivo graphFile.js
+  data = biggerGraph;
 
   const graph = dataToGraph(data)
   
-  console.log("graph length:", graph.length)
-
   return (
     <main className="w-full h-full bg-bglight">
       <Header title="PAA 4" />
