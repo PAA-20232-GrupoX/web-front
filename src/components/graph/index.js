@@ -4,11 +4,10 @@ import dagre from "cytoscape-dagre";
 import "cytoscape-context-menus/cytoscape-context-menus.css";
 import "cytoscape-navigator/cytoscape.js-navigator.css";
 import { useEffect, useRef, useState } from "react";
-import data from "./data";
 
 cytoscape.use(dagre);
 
-const AnimatedGraph = ({ treePath, setTreePath }) => {
+const AnimatedGraph = ({ data, treePath, setTreePath }) => {
   const [changedNodes, setChangedNodes] = useState([]);
   const [pan, setPan] = useState({});
 
@@ -25,6 +24,8 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
   if (typeof cytoscape("core", "navigator") === "undefined") {
   navigator(cytoscape);
   }
+
+  console.log("lenth: ", data.length)
   
   
   var options = {
@@ -166,7 +167,7 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
       layout: {
         name: "dagre",
         padding: 24,
-        spacingFactor: 1.5,
+        spacingFactor: data.length*8/1000 + 4/3,  // espacamento de acordo com o tamanho do grafo
       },
       
       elements: data,
@@ -212,8 +213,9 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
       e.target.removeClass("hover");
     });
     
-    const enableVisited = function(data) { return treePath !== undefined ? data.visited : "No" }
-    
+    const enableVisited = function (data) { return treePath !== undefined ? data.visited : "No" }
+    const changeIfLarge = function (large, normal) { return data.length > 100 ? large : normal }
+
     cy.nodeHtmlLabel([
       {
         query: ".groupIcon",
@@ -227,7 +229,7 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
           <i class="icon icon-group"></i>
           <span class="overlay"></span>
           </span>
-          <span class="group-label">${data.displayName}</span>
+          <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
           </div>`;
         }
       },
@@ -245,7 +247,7 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
           <i class="icon icon-group"></i>
           <span class="overlay"></span>
           </span>
-          <span class="group-label">${data.displayName}</span>
+          <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
           </div>`;
         }
       },
@@ -263,7 +265,7 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
           <i class="icon icon-group"></i>
           <span class="overlay"></span>
           </span>
-          <span class="group-label">${data.displayName}</span>
+          <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
           </div>`;
         }
       },
@@ -281,7 +283,7 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
           <i class="icon icon-group"></i>
           <span class="overlay"></span>
           </span>
-          <span class="group-label">${data.displayName}</span>
+          <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
           </div>`;
         }
       },
@@ -302,11 +304,11 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
           <span> &nbsp;${data.probability}</span> \
           </span> \
           ` : ''}
-          <span class="element-graphic-${data.type} visited-${enableVisited(data)}">
+          <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} visited-${enableVisited(data)}">
           <i class="icon icon-${data.kind}" /></i>
           <span class="overlay"></span>
           </span>
-          <span title="${data.displayName}" class="element-label">${data.displayName}</span>
+          <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
           </div>`;
         }
       },
@@ -327,11 +329,11 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
           <span> &nbsp;${data.probability}</span> \
           </span> \
           ` : ''}
-          <span class="element-graphic-${data.type} hover visited-${enableVisited(data)}">
+          <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} hover visited-${enableVisited(data)}">
           <i class="icon icon-${data.kind} icon-hover" /></i>
           <span class="overlay"></span>
           </span>
-          <span title="${data.displayName}" class="element-label">${data.displayName}</span>
+          <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
           </div>`;
         }
       },
@@ -352,11 +354,11 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
           <span> &nbsp;${data.probability}</span> \
           </span> \
           ` : ''}
-          <span class="element-graphic-${data.type} selected visited-${enableVisited(data)}">
+          <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} selected visited-${enableVisited(data)}">
           <i class="icon icon-${data.kind}" /></i>
           <span class="overlay"></span>  
           </span>
-          <span title="${data.displayName}" class="element-label">${data.displayName}</span>
+          <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
           </div>`;
         }
       },
@@ -377,11 +379,11 @@ const AnimatedGraph = ({ treePath, setTreePath }) => {
           <span>&nbsp;${data.probability}</span> \
           </span> \
           ` : ''}
-          <span class="element-graphic-${data.type} hover selected visited-${enableVisited(data)}">
+          <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} hover selected visited-${enableVisited(data)}">
           <i class="icon icon-${data.kind}" /></i>
           <span class="overlay"></span>
           </span>
-          <span title="${data.displayName}" class="element-label">${data.displayName}</span>
+          <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
           </div>`;
         }
       }

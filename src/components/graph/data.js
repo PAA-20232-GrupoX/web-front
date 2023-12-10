@@ -236,7 +236,7 @@ export default [
 	{
 	  group: "nodes",
 	  data: {
-		id: "c5.2",
+		id: "c5_2",
 		displayName: "C5",
         type: "Cause",
 		kind: "TelcoCloudVirtualDevice",
@@ -264,7 +264,7 @@ export default [
 	{ data: { group: "edges", label:"não", source: "s4.3", target: "c2.2" } },
 	{ data: { group: "edges", label:"sim", source: "s2.3", target: "s4.4" } },
 	{ data: { group: "edges", label:"não", source: "s2.3", target: "s4.1" } },
-	{ data: { group: "edges", label:"sim", source: "s4.4", target: "c5.2" } },
+	{ data: { group: "edges", label:"sim", source: "s4.4", target: "c5_2" } },
 	{ data: { group: "edges", label:"não", source: "s4.4", target: "c1.3" } },
   ];
   

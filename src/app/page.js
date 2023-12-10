@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Header from "@/components/header";
 import Quiz from "@/components/quiz";
 import AnimatedGraph from "@/components/graph";
+import data from '@/components/graph/data'
 
 export default function Home() {
   const [treePath, setTreePath] = useState([{ id: "s1.1", label: "Start" }]);
@@ -67,7 +68,7 @@ export default function Home() {
           </div>
         )}
         <div id="cy" className="flex justify-center items-center w-2/4">
-          <AnimatedGraph treePath={treePath} setTreePath={setTreePath} />
+          <AnimatedGraph data={data} treePath={treePath} setTreePath={setTreePath} />
         </div>
       </div>
     </main>
