@@ -7,8 +7,7 @@ import { useEffect, useRef, useState } from "react";
 
 cytoscape.use(dagre);
 
-const AnimatedGraph = ({ data, treePath, setTreePath }) => {
-
+const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
   var nodeHtmlLabel = require("cytoscape-node-html-label");
   var expandCollapse = require("cytoscape-expand-collapse");
   var navigator = require("cytoscape-navigator");
@@ -49,7 +48,7 @@ const AnimatedGraph = ({ data, treePath, setTreePath }) => {
   var currentPositions = null;
 
   useEffect(() => {
-    if (!cyRef.current) {
+    if (data.length > 0 && !cyRef.current) {
       const cy = cytoscape({
         container: document.getElementById("cy"),
         style: [
@@ -164,249 +163,252 @@ const AnimatedGraph = ({ data, treePath, setTreePath }) => {
       cyRef.current = cy;
     }
 
-    cytoscape.warnings(true)
-    // cy.fit();
-    //NODE EVENTS
-    cyRef.current.on("mouseover", "node", function (e) {
-      e.target.addClass("hover");
-    });
-    cyRef.current.on("mouseout", "node", function (e) {
-      e.target.removeClass("hover");
-    });
+    if (cyRef.current) {
 
-    cyRef.current.on("mouseup", "node", function (e) {
-      e.target.addClass("hover");
-    });
-    
-    cyRef.current.on("mousedown", "node", function (e) {
-      e.target.addClass("hover");
-    });
-    cyRef.current.on("click", "node", function (e) {
-      console.log("clicked:" + this.id());
-    });
-    
-    //EDGES EVENTS
-    cyRef.current.on("mouseover", "edge", function (e) {
-      e.target.addClass("hover");
-    });
-    cyRef.current.on("mouseout", "edge", function (e) {
-      e.target.removeClass("hover");
-    });
-    
-    const enableVisited = function (data) { return treePath !== undefined ? data.visited : "No" }
-    const changeIfLarge = function (large, normal) { return data.length > 100 ? large : normal }
+      cytoscape.warnings(true)
+      // cy.fit();
+      //NODE EVENTS
+      cyRef.current.on("mouseover", "node", function (e) {
+        e.target.addClass("hover");
+      });
+      cyRef.current.on("mouseout", "node", function (e) {
+        e.target.removeClass("hover");
+      });
 
-    cyRef.current.nodeHtmlLabel([
-      {
-        query: ".groupIcon",
-        halign: "center",
-        valign: "center",
-        halignBox: "center",
-        valignBox: "center",
-        tpl: function (data) {
-          return `<div class="group ${data.collapsedChildren ? "show" : "hide"}">
-          <span class="group-graphic alarmSeverity-${data.alarmSeverity}">
-          <i class="icon icon-group"></i>
-          <span class="overlay"></span>
-          </span>
-          <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
-          </div>`;
+      cyRef.current.on("mouseup", "node", function (e) {
+        e.target.addClass("hover");
+      });
+      
+      cyRef.current.on("mousedown", "node", function (e) {
+        e.target.addClass("hover");
+      });
+      cyRef.current.on("click", "node", function (e) {
+        console.log("clicked:" + this.id());
+      });
+      
+      //EDGES EVENTS
+      cyRef.current.on("mouseover", "edge", function (e) {
+        e.target.addClass("hover");
+      });
+      cyRef.current.on("mouseout", "edge", function (e) {
+        e.target.removeClass("hover");
+      });
+      
+      const enableVisited = function (data) { return treePath !== undefined ? data.visited : "No" }
+      const changeIfLarge = function (large, normal) { return data.length > 100 ? large : normal }
+
+      cyRef.current.nodeHtmlLabel([
+        {
+          query: ".groupIcon",
+          halign: "center",
+          valign: "center",
+          halignBox: "center",
+          valignBox: "center",
+          tpl: function (data) {
+            return `<div class="group ${data.collapsedChildren ? "show" : "hide"}">
+            <span class="group-graphic alarmSeverity-${data.alarmSeverity}">
+            <i class="icon icon-group"></i>
+            <span class="overlay"></span>
+            </span>
+            <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            </div>`;
+          }
+        },
+        {
+          query: ".groupIcon.hover",
+          halign: "center",
+          valign: "center",
+          halignBox: "center",
+          valignBox: "center",
+          tpl: function (data) {
+            return `<div class="group ${data.collapsedChildren ? "show" : "hide"}">
+            <span class="group-graphic hover alarmSeverity-${
+              data.alarmSeverity
+            }">
+            <i class="icon icon-group"></i>
+            <span class="overlay"></span>
+            </span>
+            <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            </div>`;
+          }
+        },
+        {
+          query: ".groupIcon:selected",
+          halign: "center",
+          valign: "center",
+          halignBox: "center",
+          valignBox: "center",
+          tpl: function (data) {
+            return `<div class="group ${data.collapsedChildren ? "show" : "hide"}">
+            <span class="group-graphic selected alarmSeverity-${
+              data.alarmSeverity
+            }">
+            <i class="icon icon-group"></i>
+            <span class="overlay"></span>
+            </span>
+            <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            </div>`;
+          }
+        },
+        {
+          query: ".groupIcon.hover:selected",
+          halign: "center",
+          valign: "center",
+          halignBox: "center",
+          valignBox: "center",
+          tpl: function (data) {
+            return `<div class="group ${data.collapsedChildren ? "show" : "hide"}">
+            <span class="group-graphic hover selected alarmSeverity-${
+              data.alarmSeverity
+            }">
+            <i class="icon icon-group"></i>
+            <span class="overlay"></span>
+            </span>
+            <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            </div>`;
+          }
+        },
+        {
+          query: ".nodeIcon",
+          halign: "center",
+          valign: "center",
+          halignBox: "center",
+          valignBox: "center",
+          tpl: function (data) {
+            return `<div class="element ${data._hidden}">
+            <span class="element-severity_badge">
+            <i class="icon icon-${data.alarmSeverity}" /></i>
+            </span>
+            ${data.probability !== undefined ? `\
+            <span class="element-probability"> \
+            <i class="icon icon-probability" /></i> \
+            <span> &nbsp;${data.probability}</span> \
+            </span> \
+            ` : ''}
+            <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} visited-${enableVisited(data)}">
+            <i class="icon icon-${data.kind}" /></i>
+            <span class="overlay"></span>
+            </span>
+            <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            </div>`;
+          }
+        },
+        {
+          query: ".nodeIcon.hover",
+          halign: "center",
+          valign: "center",
+          halignBox: "center",
+          valignBox: "center",
+          tpl: function (data) {
+            return `<div class="element ${data._hidden}">
+            <span class="element-severity_badge">
+            <i class="icon icon-${data.alarmSeverity}" /></i>
+            </span>
+            ${data.probability !== undefined ? `\
+            <span class="element-probability"> \
+            <i class="icon icon-probability" /></i> \
+            <span> &nbsp;${data.probability}</span> \
+            </span> \
+            ` : ''}
+            <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} hover visited-${enableVisited(data)}">
+            <i class="icon icon-${data.kind} icon-hover" /></i>
+            <span class="overlay"></span>
+            </span>
+            <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            </div>`;
+          }
+        },
+        {
+          query: ".nodeIcon:selected",
+          halign: "center",
+          valign: "center",
+          halignBox: "center",
+          valignBox: "center",
+          tpl: function (data) {
+            return `<div class="element ${data._hidden}">
+            <span class="element-severity_badge">
+            <i class="icon icon-${data.alarmSeverity}" /></i>
+            </span>
+            ${data.probability !== undefined ? `\
+            <span class="element-probability"> \
+            <i class="icon icon-probability" /></i> \
+            <span> &nbsp;${data.probability}</span> \
+            </span> \
+            ` : ''}
+            <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} selected visited-${enableVisited(data)}">
+            <i class="icon icon-${data.kind}" /></i>
+            <span class="overlay"></span>  
+            </span>
+            <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            </div>`;
+          }
+        },
+        {
+          query: ".nodeIcon.hover:selected",
+          halign: "center",
+          valign: "center",
+          halignBox: "center",
+          valignBox: "center",
+          tpl: function (data) {
+            return `<div class="element ${data._hidden}">
+            <span class="element-severity_badge">
+            <i class="icon icon-${data.alarmSeverity}" /></i>
+            </span>
+            ${data.probability !== undefined ? `\
+            <span class="element-probability"> \
+            <i class="icon icon-probability" /></i> \
+            <span>&nbsp;${data.probability}</span> \
+            </span> \
+            ` : ''}
+            <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} hover selected visited-${enableVisited(data)}">
+            <i class="icon icon-${data.kind}" /></i>
+            <span class="overlay"></span>
+            </span>
+            <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
+            </div>`;
+          }
         }
-      },
-      {
-        query: ".groupIcon.hover",
-        halign: "center",
-        valign: "center",
-        halignBox: "center",
-        valignBox: "center",
-        tpl: function (data) {
-          return `<div class="group ${data.collapsedChildren ? "show" : "hide"}">
-          <span class="group-graphic hover alarmSeverity-${
-            data.alarmSeverity
-          }">
-          <i class="icon icon-group"></i>
-          <span class="overlay"></span>
-          </span>
-          <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
-          </div>`;
-        }
-      },
-      {
-        query: ".groupIcon:selected",
-        halign: "center",
-        valign: "center",
-        halignBox: "center",
-        valignBox: "center",
-        tpl: function (data) {
-          return `<div class="group ${data.collapsedChildren ? "show" : "hide"}">
-          <span class="group-graphic selected alarmSeverity-${
-            data.alarmSeverity
-          }">
-          <i class="icon icon-group"></i>
-          <span class="overlay"></span>
-          </span>
-          <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
-          </div>`;
-        }
-      },
-      {
-        query: ".groupIcon.hover:selected",
-        halign: "center",
-        valign: "center",
-        halignBox: "center",
-        valignBox: "center",
-        tpl: function (data) {
-          return `<div class="group ${data.collapsedChildren ? "show" : "hide"}">
-          <span class="group-graphic hover selected alarmSeverity-${
-            data.alarmSeverity
-          }">
-          <i class="icon icon-group"></i>
-          <span class="overlay"></span>
-          </span>
-          <span class="group-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
-          </div>`;
-        }
-      },
-      {
-        query: ".nodeIcon",
-        halign: "center",
-        valign: "center",
-        halignBox: "center",
-        valignBox: "center",
-        tpl: function (data) {
-          return `<div class="element ${data._hidden}">
-          <span class="element-severity_badge">
-          <i class="icon icon-${data.alarmSeverity}" /></i>
-          </span>
-          ${data.probability !== undefined ? `\
-          <span class="element-probability"> \
-          <i class="icon icon-probability" /></i> \
-          <span> &nbsp;${data.probability}</span> \
-          </span> \
-          ` : ''}
-          <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} visited-${enableVisited(data)}">
-          <i class="icon icon-${data.kind}" /></i>
-          <span class="overlay"></span>
-          </span>
-          <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
-          </div>`;
-        }
-      },
-      {
-        query: ".nodeIcon.hover",
-        halign: "center",
-        valign: "center",
-        halignBox: "center",
-        valignBox: "center",
-        tpl: function (data) {
-          return `<div class="element ${data._hidden}">
-          <span class="element-severity_badge">
-          <i class="icon icon-${data.alarmSeverity}" /></i>
-          </span>
-          ${data.probability !== undefined ? `\
-          <span class="element-probability"> \
-          <i class="icon icon-probability" /></i> \
-          <span> &nbsp;${data.probability}</span> \
-          </span> \
-          ` : ''}
-          <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} hover visited-${enableVisited(data)}">
-          <i class="icon icon-${data.kind} icon-hover" /></i>
-          <span class="overlay"></span>
-          </span>
-          <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
-          </div>`;
-        }
-      },
-      {
-        query: ".nodeIcon:selected",
-        halign: "center",
-        valign: "center",
-        halignBox: "center",
-        valignBox: "center",
-        tpl: function (data) {
-          return `<div class="element ${data._hidden}">
-          <span class="element-severity_badge">
-          <i class="icon icon-${data.alarmSeverity}" /></i>
-          </span>
-          ${data.probability !== undefined ? `\
-          <span class="element-probability"> \
-          <i class="icon icon-probability" /></i> \
-          <span> &nbsp;${data.probability}</span> \
-          </span> \
-          ` : ''}
-          <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} selected visited-${enableVisited(data)}">
-          <i class="icon icon-${data.kind}" /></i>
-          <span class="overlay"></span>  
-          </span>
-          <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
-          </div>`;
-        }
-      },
-      {
-        query: ".nodeIcon.hover:selected",
-        halign: "center",
-        valign: "center",
-        halignBox: "center",
-        valignBox: "center",
-        tpl: function (data) {
-          return `<div class="element ${data._hidden}">
-          <span class="element-severity_badge">
-          <i class="icon icon-${data.alarmSeverity}" /></i>
-          </span>
-          ${data.probability !== undefined ? `\
-          <span class="element-probability"> \
-          <i class="icon icon-probability" /></i> \
-          <span>&nbsp;${data.probability}</span> \
-          </span> \
-          ` : ''}
-          <span class="element-graphic-${data.type} ${changeIfLarge('graphic-large', 'graphic-normal')} hover selected visited-${enableVisited(data)}">
-          <i class="icon icon-${data.kind}" /></i>
-          <span class="overlay"></span>
-          </span>
-          <span title="${data.displayName}" class="element-label ${changeIfLarge('label-large', 'label-normal')}">${data.displayName}</span>
-          </div>`;
-        }
-      }
-    ]);
-    
-    var defaults = {
-      container: false, // html dom element
-      viewLiveFramerate: 0, // set false to update graph pan only on drag end; set 0 to do it instantly; set a number (frames per second) to update not more than N times per second
-      thumbnailEventFramerate: 30, // max thumbnail's updates per second triggered by graph updates
-      thumbnailLiveFramerate: false, // max thumbnail's updates per second. Set false to disable
-      dblClickDelay: 200, // milliseconds
-      removeCustomContainer: false, // destroy the container specified by user on plugin destroy
-      rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
-    };
+      ]);
+      
+      var defaults = {
+        container: false, // html dom element
+        viewLiveFramerate: 0, // set false to update graph pan only on drag end; set 0 to do it instantly; set a number (frames per second) to update not more than N times per second
+        thumbnailEventFramerate: 30, // max thumbnail's updates per second triggered by graph updates
+        thumbnailLiveFramerate: false, // max thumbnail's updates per second. Set false to disable
+        dblClickDelay: 200, // milliseconds
+        removeCustomContainer: false, // destroy the container specified by user on plugin destroy
+        rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
+      };
 
 
-    var nav = cyRef.current.navigator(defaults);
-    
-    cyRef.current.nodes().forEach((node) => {
-      const nodeId = node.id();
-      if (treePath !== undefined && treePath.find((item) => item.id === nodeId) !== undefined) {
-        node._private.data.visited = "Yes"
-      }
-    });
+      var nav = cyRef.current.navigator(defaults);
+      
+      cyRef.current.nodes().forEach((node) => {
+        const nodeId = node.id();
+        if (treePath !== undefined && treePath.find((item) => item.id === nodeId) !== undefined) {
+          node._private.data.visited = "Yes"
+        }
+      });
 
-    cyRef.current.edges().forEach((edge) => {
-      const edgeId = edge.id();
-      var color = "#ccc";
-      if (treePath !== undefined && treePath.length > 0) {
-        const idx = treePath.findIndex((item) => item.id === edge._private.source.id())
-        color = idx >= 0 && idx < treePath.length-1 && treePath[idx + 1].id === edge._private.target.id() ? "#c00" : "#ccc"
-      }
-      edge.style(
-        "line-color",
-        color
-      );
-      edge.style(
-        "target-arrow-color",
-        color
-      );
-    });
+      cyRef.current.edges().forEach((edge) => {
+        const edgeId = edge.id();
+        var color = "#ccc";
+        if (treePath !== undefined && treePath.length > 0) {
+          const idx = treePath.findIndex((item) => item.id === edge._private.source.id())
+          color = idx >= 0 && idx < treePath.length-1 && treePath[idx + 1].id === edge._private.target.id() ? "#c00" : "#ccc"
+        }
+        edge.style(
+          "line-color",
+          color
+        );
+        edge.style(
+          "target-arrow-color",
+          color
+        );
+      });
+    }
 
-  }, [treePath]);
+  }, [treePath, data]);
   
 }
 

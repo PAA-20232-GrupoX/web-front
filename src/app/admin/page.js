@@ -2,6 +2,7 @@
 import Header from "@/components/header";
 import AnimatedGraph from "@/components/graph";
 import biggerGraph from "@/app/admin/graphFile"
+import { useEffect, useState } from "react";
 
 function dataToGraph(dictData) {
   var graph = []
@@ -50,29 +51,33 @@ function dataToGraph(dictData) {
 
 
 export default function Admin() {
+  const [graph, setGraph] = useState({});
 
-  // grafo recebido do back
-  var data = {
-  's a': [['c x', 0.6], ['s a;s b', 0.7], ['s a;s c', 0.5]],
-  's b': [['c x', 0.9], ['s a;s b', 0.7]],
-  's a;s c': [['c y', 0.5]],
-  's a;s b': [['c y', 0.7]],
-  's c': [['s a;s c', 0.5]],
-  '': [['s b', 1.6], ['s c', 0.5], ['s a', 1.8]],
-  'c x': [['!', 0.0]],
-  'c y': [['!', 0.0]]
-  }
+  useEffect (() => {
+    // grafo recebido do back
+    var data = {
+    's a': [['c x', 0.6], ['s a;s b', 0.7], ['s a;s c', 0.5]],
+    's b': [['c x', 0.9], ['s a;s b', 0.7]],
+    's a;s c': [['c y', 0.5]],
+    's a;s b': [['c y', 0.7]],
+    's c': [['s a;s c', 0.5]],
+    '': [['s b', 1.6], ['s c', 0.5], ['s a', 1.8]],
+    'c x': [['!', 0.0]],
+    'c y': [['!', 0.0]]
+    }
 
-  // comente para ver o grafo mais simples, senão sobrescreve com o grafo do arquivo graphFile.js
-  data = biggerGraph;
+    // comente para ver o grafo mais simples, senão sobrescreve com o grafo do arquivo graphFile.js
+    data = biggerGraph;
 
-  const graph = dataToGraph(data)
-  
+    setGraph(dataToGraph(data))
+    console.log("graph set")
+  },  []);
+
   return (
     <main className="w-full h-full bg-bglight">
       <Header title="PAA 4" />
       <div id="cy" className="flex justify-center items-center w-2/4">
-          <AnimatedGraph data={graph}/>
+          <AnimatedGraph data={graph} setData={setGraph}/>
         </div>
     </main>
   );
