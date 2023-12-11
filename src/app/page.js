@@ -194,48 +194,24 @@ export default function Home() {
   };
 
   const calculateTree = (tree) => {
+    var lastNode = tree[0][0][tree[0][1]][0];
     var data = [
       {
         group: "nodes",
         data: {
-          id: "root",
-          displayName: "Raíz",
+          id: lastNode,
+          displayName: nameConversion(lastNode),
           type: "Symptom",
-          kind: "NetworkService",
-          visited: "Yes",
+          kind: "VNF",
+          visited: "No",
           alarmSeverity: "cleared",
-          //     probability: "0.8"
+          probability: tree[0][0][tree[0][1]][1].toFixed(1),
         },
         classes: "nodeIcon",
       },
     ];
-    const path = [{ id: "root" }];
 
-    var lastNode = tree[0][0][tree[0][1]][0];
-    data.push({
-      group: "nodes",
-      data: {
-        id: lastNode,
-        displayName: nameConversion(lastNode),
-        type: "Symptom",
-        kind: "VNF",
-        visited: "No",
-        alarmSeverity: "cleared",
-        probability: tree[0][0][tree[0][1]][1].toFixed(1),
-      },
-      classes: "nodeIcon",
-    });
-
-    data.push({
-      data: {
-        group: "edges",
-        source: "root",
-        target: lastNode,
-        label: "",
-      },
-    });
-
-    path.push({ id: lastNode });
+    const path = [{ id: lastNode }];
 
     tree.shift();
 
@@ -345,7 +321,7 @@ export default function Home() {
         ) : (
           <div className="flex flex-col gap-6 justify-center items-center w-full">
             <h1 className="text-4xl text-primary">
-              A sua solução é {nameConv[solution]}
+              A sua solução é <span className="capitalize">{nameConv[solution]}</span>
             </h1>
             <button
               className="px-4 py-2 rounded-md text-xl bg-primary text-bgdark hover:text-primary hover:bg-bgdark"
@@ -356,7 +332,7 @@ export default function Home() {
           </div>
         )}
         {seeTree && (
-          <div id="cy" className="flex justify-center items-center w-2/4 h-3/5">
+          <div id="cy">
             {!loading && (
               <AnimatedTree
                 data={tree}

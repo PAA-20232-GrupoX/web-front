@@ -33,6 +33,12 @@ body {
   display: inline-block;
   width: 24px;
   height: 24px;
+  overflow: visible;
+}
+
+.icon-large {
+  width: 48px;
+  height: 48px;
 }
 
 .element {
@@ -42,6 +48,10 @@ body {
   margin-top: 20px;
 }
 
+.element-large {
+  margin-top: 33px;
+}
+
 .element-severity_badge {
   position: absolute;
   width: 14px;
@@ -49,7 +59,6 @@ body {
   border-radius: 50%;
   margin-left: -36px;
   margin-top: -4px;
-  border: 3px solid #fff;
   box-shadow: 0 0 1px 0 rgb(0, 0, 0, 0.12), 0 1px 1px 0 rgb(0, 0, 0, 0.12);
   background: #fff;
   z-index: 999;
@@ -63,6 +72,12 @@ body {
   right: 2px;
   position: relative;
 }
+
+/* .element-severity_badge > .icon-large { */
+  /* width: 36px; */
+  /* height: 36px; */
+/* } */
+
 
 .element-probability {
   position: absolute;
@@ -126,17 +141,9 @@ body {
   box-shadow: 0 0 1px 0 rgb(0, 0, 0, 0.12), 0 1px 1px 0 rgb(0, 0, 0, 0.24);
 }
 
-.element-graphic-Symptom {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  border: 4px solid rgb(255, 255, 255, 1);
-  box-shadow: 0 0 1px 0 rgb(0, 0, 0, 0.12), 0 1px 1px 0 rgb(0, 0, 0, 0.24);
-}
-
+.element-graphic-Symptom,
+.element-graphic-Root,
+.element-graphic-Association,
 .element-graphic-Cause {
   display: inline-flex;
   justify-content: center;
@@ -144,36 +151,78 @@ body {
   border-radius: 50%;
   width: 38px;
   height: 38px;
-  border: 4px solid rgb(108, 223, 255);
+  border: 4px solid rgb(255, 255, 255, 1);
   box-shadow: 0 0 1px 0 rgb(0, 0, 0, 0.12), 0 1px 1px 0 rgb(0, 0, 0, 0.24);
+}
+
+.graphic-large {
+  width: 76px;
+  height: 76px;
 }
 
 /*box-shadow: 0 0 0px 2px rgb(227, 73, 76, 1);*/
 
 .element-graphic-Symptom.hover > .overlay {
-  width: 38px;
-  height: 38px;
   position: absolute;
   background-color: #000000;
   opacity: 0.3;
   border-radius: 50%;
+  width: 38px;
+  height: 38px;
+}
+
+.element-graphic-Root.hover > .overlay {
+  position: absolute;
+  background-color: #000000;
+  opacity: 0.3;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
 }
 
 .element-graphic-Cause.hover > .overlay {
-  width: 38px;
-  height: 38px;
   position: absolute;
   background-color: #000000;
   opacity: 0.3;
   border-radius: 50%;
+  width: 38px;
+  height: 38px;
 }
 
-.element-graphic-Symptom.selected {
-  box-shadow: 0 0 0px 2px #5da4ef;
-  border: 4px solid rgb(255, 255, 255, 1);
+.element-graphic-Association.hover > .overlay {
+  position: absolute;
+  background-color: #000000;
+  opacity: 0.3;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
 }
 
-.element-graphic-Cause.selected {
+.element-graphic-Cause.hover > .overlay-large {
+  width: 76px;
+  height: 76px;
+}
+
+.element-graphic-Symptom.hover > .overlay-large {
+  width: 76px;
+  height: 76px;
+}
+
+.element-graphic-Root.hover > .overlay-large {
+  width: 76px;
+  height: 76px;
+}
+
+.element-graphic-Association.hover > .overlay-large {
+  width: 76px;
+  height: 76px;
+}
+
+
+.element-graphic-Symptom.selected,
+.element-graphic-Root.selected,
+.element-graphic-Cause.selected,
+.element-graphic-Association.selected {
   box-shadow: 0 0 0px 2px #5da4ef;
   border: 4px solid rgb(255, 255, 255, 1);
 }
@@ -185,14 +234,18 @@ body {
 
 .element-label {
   font-family: "Nokia Pure Regular";
-  font-size: 10px;
   color: rgb(0, 0, 0, 0.87);
-  max-width: 75px;
+  max-width: 175px;
   overflow: hidden;
   text-overflow: ellipsis;
   text-transform: capitalize;
   white-space: nowrap;
+  font-size: 10px;
   padding-top: 4px;
+}
+
+.label-large {
+  font-size: 20px;
 }
 
 .group {
@@ -243,8 +296,7 @@ body {
 
 .group-label {
   font-family: "Nokia Pure Regular";
-  font-size: 10px;
-  max-width: 75px;
+  max-width: 100px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -254,35 +306,25 @@ body {
 }
 
 /* ICONS */
-.icon-equipment_ne {
-  mask-image: url(./imgs/ic_equipment_ne.svg);
-  -webkit-mask-image: url(./imgs/ic_equipment_ne.svg);
+
+.icon-Symptom {
+  mask-image: url(./imgs/ic_symptom.svg);
+  -webkit-mask-image: url(./imgs/ic_symptom.svg);
 }
 
-.icon-server {
-  mask-image: url(./imgs/ic_server.svg);
-  -webkit-mask-image: url(./imgs/ic_server.svg);
+.icon-Root {
+  mask-image: url(./imgs/ic_empty.svg);
+  -webkit-mask-image: url(./imgs/ic_empty.svg);
 }
 
-.icon-NetworkService {
-  mask-image: url(./imgs/ic_service.svg);
-  -webkit-mask-image: url(./imgs/ic_service.svg);
+.icon-Association {
+  mask-image: url(./imgs/ic_association.svg);
+  -webkit-mask-image: url(./imgs/ic_association.svg);
 }
 
-.icon-TelcoCloudVirtualDevice {
-  mask-image: url(./imgs/ic_device.svg);
-  -webkit-mask-image: url(./imgs/ic_device.svg);
-}
-
-.icon-TelcoCloudPhysicalDevice {
-  mask-image: url(./imgs/ic_router_circle.svg);
-  -webkit-mask-image: url(./imgs/ic_router_circle.svg);
-}
-
-.icon-VNFComponent,
-.icon-VNF {
-  mask-image: url(./imgs/ic_virtual_network_function.svg);
-  -webkit-mask-image: url(./imgs/ic_virtual_network_function.svg);
+.icon-Cause {
+  mask-image: url(./imgs/ic_cause.svg);
+  -webkit-mask-image: url(./imgs/ic_cause.svg);
 }
 
 .icon-group {
@@ -297,7 +339,7 @@ body {
 
 /** ALARM SEVERITY **/
 .icon-indeterminate {
-  /* background: url(./imgs/ic_indeterminate_kpi.svg); */
+  /* background: url(./imgs/ic_indeterm;inate_kpi.svg); */
 }
 
 .icon-cleared {

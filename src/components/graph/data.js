@@ -246,6 +246,7 @@ export default [
 	  },
 	  classes: "nodeIcon"
 	},
+	// label = probability
 	{ data: { group: "edges", label:"sim", source: "s1.1", target: "s2.1" } },
 	{ data: { group: "edges", label:"não", source: "s1.1", target: "s3.1" } },
 	{ data: { group: "edges", label:"não sei", source: "s1.1", target: "s4.1" } },
