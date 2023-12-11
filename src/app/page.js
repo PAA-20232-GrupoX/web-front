@@ -68,7 +68,7 @@ export default function Home() {
           </div>
         )}
         <div id="cy" className="flex justify-center items-center w-2/4">
-          <AnimatedGraph data={data} treePath={treePath} setTreePath={setTreePath} />
+          <AnimatedGraph data={data} treePath={treePath} setTreePath={setTreePath} allowDelete={false} />
         </div>
       </div>
     </main>

@@ -8,7 +8,7 @@ import InfoBox from "../info";
 
 cytoscape.use(dagre);
 
-const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
+const AnimatedGraph = ({ data, setData, treePath, setTreePath, allowDelete }) => {
   var nodeHtmlLabel = require("cytoscape-node-html-label");
   var expandCollapse = require("cytoscape-expand-collapse");
   var navigator = require("cytoscape-navigator");
@@ -405,6 +405,39 @@ const AnimatedGraph = ({ data, setData, treePath, setTreePath }) => {
           );
         }
       });
+    }
+
+    if (allowDelete) {
+      const handleKeyDown = (event) => {
+        if (event.key === 'Delete') {
+          const selectedNode = cyRef.current.$(':selected');
+          if (selectedNode.nonempty()) {
+            const descendants = getDescendants(selectedNode);
+            
+            cyRef.current.remove(selectedNode.add(descendants));
+  
+            const deletedNodeIds = descendants.add(selectedNode).map(node => node.id());
+            //sendDeletedNodesToBackend(deletedNodeIds);
+    
+          }
+        }
+      };
+    
+      const getDescendants = (node) => {
+        let descendants = cyRef.current.collection();
+        node.successors().forEach((successor) => {
+          descendants = descendants.union(getDescendants(successor));
+        });
+        return descendants.add(node);
+      };
+    
+      // Add event listener for keydown
+      document.addEventListener('keydown', handleKeyDown);
+    
+      return () => {
+        // Clean up the event listener on component unmount
+        document.removeEventListener('keydown', handleKeyDown);
+      };
     }
 
   }, [treePath, data]);

@@ -88,7 +88,7 @@ export default function Admin() {
       <Header title="PAA 4" />
       <div className="flex h-5/6">
         <div id="cy" className="flex justify-center items-center w-2/4">
-            <AnimatedGraph data={graph} setData={setGraph}/>
+            <AnimatedGraph data={graph} setData={setGraph} allowDelete={true}/>
         </div>
       </div>
     </main>
