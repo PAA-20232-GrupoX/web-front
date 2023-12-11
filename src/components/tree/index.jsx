@@ -115,10 +115,10 @@ const AnimatedTree = ({ data, treePath, setTreePath }) => {
         {
           selector: "node",
           css: {
-            width: "38px",
-            height: "38px",
+            width: "52px",
+            height: "52px",
             "font-family": "Nokia Pure Regular",
-            "background-opacity": "1"
+            "background-opacity": "0",
           }
         },
         //GROUP

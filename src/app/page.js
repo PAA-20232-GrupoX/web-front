@@ -5,6 +5,7 @@ import Header from "@/components/header";
 import Quiz from "@/components/quiz";
 import AnimatedGraph from "@/components/graph";
 import AnimatedTree from "@/components/tree";
+import axios from "axios";
 
 const nameConv = {
   "rede convolutiva": 0,
@@ -142,9 +143,11 @@ const allSymptons = [
 ];
 
 export default function Home() {
-  const [treePath, setTreePath] = useState([{ id: "s1.1", label: "Start" }]);
+  const [treePath, setTreePath] = useState([]);
+  const [graph, setGraph] = useState({});
+  const [stack, setStack] = useState([]);
   const [tree, setTree] = useState([]);
-  const [currentNode, setCurrentNode] = useState("s1.1");
+  const [currentNode, setCurrentNode] = useState("");
   const [finished, setFinished] = useState(false);
   const [solution, setSolution] = useState("");
   const [loading, setLoading] = useState(true);
@@ -190,80 +193,7 @@ export default function Home() {
     return "Cause";
   };
 
-  const answer = (answer) => {
-    tree.forEach((node) => {
-      if (
-        node.data.source === currentNode &&
-        node.data.label.toLowerCase() === answer.toLowerCase()
-      ) {
-        setTreePath([...treePath, { id: node.data.target, label: answer }]);
-        if (node.data.target[0] === "c") {
-          // chegou em um nó final
-          setFinished(true);
-          setSolution(node.data.target);
-          return;
-        }
-        setCurrentNode(node.data.target);
-      }
-    });
-  };
-
-  useEffect(() => {
-    // puxar árvore da api
-    const tree = [
-      [
-        [
-          ["1", 7.8],
-          ["42", 7.1],
-          ["3", 6.5],
-          ["15", 6.300000000000001],
-          ["29", 4.2],
-          ["13", 4.1],
-          ["48", 4.1],
-          ["23", 4.0],
-          ["11", 4.0],
-          ["40", 4.0],
-          ["46", 4.0],
-          ["45", 4.0],
-          ["16", 3.9000000000000004],
-          ["20", 3.8],
-          ["43", 3.8],
-          ["21", 3.8],
-          ["32", 3.6],
-          ["31", 3.6],
-          ["9", 3.4000000000000004],
-          ["2", 3.3],
-          ["18", 3.2],
-          ["4", 3.1],
-          ["26", 3.1],
-          ["27", 3.1],
-          ["6", 3.0],
-          ["34", 3.0],
-          ["35", 3.0],
-          ["38", 2.9000000000000004],
-          ["37", 2.9000000000000004],
-          ["24", 0.0],
-        ],
-        0,
-      ],
-      [
-        [
-          ["1;2", 1.65],
-          ["1;3;4", 1.55],
-          ["1;6", 1.5],
-          ["*24;23", 0.8],
-        ],
-        0,
-      ],
-      [
-        [
-          ["0", 0.85],
-          ["*24;23", 0.8],
-        ],
-        0,
-      ],
-    ];
-
+  const calculateTree = (tree) => {
     var data = [
       {
         group: "nodes",
@@ -345,8 +275,60 @@ export default function Home() {
 
     setTree(data);
     setTreePath(path);
+  };
 
+  const answer = (answer) => {
+    setLoading(true);
+    {
+      axios
+        .post("http://localhost:8000/answer", {
+          graph: graph,
+          stack: stack,
+          answer: answer,
+        })
+        .then((res) => {
+          setStack(res.data.stack);
+          calculateTree([...res.data.stack]);
+
+          if (res.data.result) {
+            setSolution(res.data.result);
+            setFinished(true);
+            return;
+          }
+
+          const nextNode = res.data.next_symptom;
+          setCurrentNode(nextNode);
+        });
+    }
     setLoading(false);
+  };
+
+  const restart = () => {
+    setLoading(true);
+    {
+      axios.get("http://localhost:8000/tree").then((res) => {
+        setStack(res.data.stack);
+        setGraph(res.data.graph);
+        setCurrentNode(res.data.next_symptom);
+
+        calculateTree([...res.data.stack]);
+      });
+      setFinished(false);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    // teste
+    axios.get("http://localhost:8000/tree").then((res) => {
+      setStack(res.data.stack);
+      setGraph(res.data.graph);
+      setCurrentNode(res.data.next_symptom);
+
+      calculateTree([...res.data.stack]);
+
+      setLoading(false);
+    });
   }, []);
 
   return (
@@ -356,17 +338,25 @@ export default function Home() {
       <div className="flex h-full">
         {!finished ? (
           <div className="flex justify-center items-center w-full">
-            <Quiz currentNode={currentNode} answer={answer} />
+            {!loading && (
+              <Quiz currentNode={nameConv[currentNode]} answer={answer} />
+            )}
           </div>
         ) : (
-          <div className="flex justify-center items-center w-2/4">
+          <div className="flex flex-col gap-6 justify-center items-center w-full">
             <h1 className="text-4xl text-primary">
-              A sua solução é {solution}
+              A sua solução é {nameConv[solution]}
             </h1>
+            <button
+              className="px-4 py-2 rounded-md text-xl bg-primary text-bgdark hover:text-primary hover:bg-bgdark"
+              onClick={() => restart()}
+            >
+              Recomeçar
+            </button>
           </div>
         )}
         {seeTree && (
-          <div id="cy" className="flex justify-center items-center w-2/4">
+          <div id="cy" className="flex justify-center items-center w-2/4 h-3/5">
             {!loading && (
               <AnimatedTree
                 data={tree}
