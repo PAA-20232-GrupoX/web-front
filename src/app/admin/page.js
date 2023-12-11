@@ -3,6 +3,7 @@ import Header from "@/components/header";
 import AnimatedGraph from "@/components/graph";
 import biggerGraph from "@/app/admin/graphFile"
 import { useEffect, useState } from "react";
+import UploadFile from "@/components/UploadFile";
 
 function dataToGraph(dictData) {
   var graph = []
@@ -87,6 +88,7 @@ export default function Admin() {
     <main className="w-full h-full bg-bglight">
       <Header title="PAA 4" />
       <div className="flex h-5/6">
+        <UploadFile></UploadFile>
         <div id="cy" className="flex justify-center items-center w-2/4">
             <AnimatedGraph data={graph} setData={setGraph} allowDelete={true}/>
         </div>
