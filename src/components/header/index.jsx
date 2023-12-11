@@ -4,14 +4,8 @@ const Header = ({ title }) => {
   };
 
   return (
-    <div className="flex justify-between items-center p-5 bg-bgdark">
+    <div className="flex fixed top-0 w-full z-10 justify-between items-center p-5 bg-bgdark">
       <h1 className="text-4xl text-primary">{title}</h1>
-      <button
-        className="text-xl text-primary hover:text-bglight hover:cursor-pointer"
-        onClick={() => handleSeeTree()}
-      >
-        Ver árvore
-      </button>
     </div>
   );
 };
