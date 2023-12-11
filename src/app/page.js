@@ -7,141 +7,6 @@ import AnimatedGraph from "@/components/graph";
 import AnimatedTree from "@/components/tree";
 import axios from "axios";
 
-const nameConv = {
-  "rede convolutiva": 0,
-  0: "rede convolutiva",
-  imagens: 1,
-  1: "imagens",
-  "reconhecimento de padrões": 2,
-  2: "reconhecimento de padrões",
-  "grande volume de dados": 3,
-  3: "grande volume de dados",
-  "alta variabilidade": 4,
-  4: "alta variabilidade",
-  "modelo baseado em transformadores": 5,
-  5: "modelo baseado em transformadores",
-  "tarefa de segmentação": 6,
-  6: "tarefa de segmentação",
-  "BERT para análise de sentimento": 7,
-  7: "BERT para análise de sentimento",
-  texto: 8,
-  8: "texto",
-  "análise de sentimento": 9,
-  9: "análise de sentimento",
-  "LSTM para sequências temporais": 10,
-  10: "LSTM para sequências temporais",
-  "sequência temporal": 11,
-  11: "sequência temporal",
-  "transformador para tradução": 12,
-  12: "transformador para tradução",
-  "tarefa de tradução": 13,
-  13: "tarefa de tradução",
-  "árvore de decisão": 14,
-  14: "árvore de decisão",
-  "dados categóricos": 15,
-  15: "dados categóricos",
-  "pequeno volume de dados": 16,
-  16: "pequeno volume de dados",
-  "Random Forest": 17,
-  17: "Random Forest",
-  "dados faltantes": 18,
-  18: "dados faltantes",
-  SVM: 19,
-  19: "SVM",
-  "dados contínuos": 20,
-  20: "dados contínuos",
-  "pequena quantidade de features": 21,
-  21: "pequena quantidade de features",
-  "regressão linear": 22,
-  22: "regressão linear",
-  "dados lineares": 23,
-  23: "dados lineares",
-  "grande complexidade": 24,
-  24: "grande complexidade",
-  "K-means": 25,
-  25: "K-means",
-  "dados agrupáveis": 26,
-  26: "dados agrupáveis",
-  "sem rótulos": 27,
-  27: "sem rótulos",
-  "rede neural profunda": 28,
-  28: "rede neural profunda",
-  "alta complexidade": 29,
-  29: "alta complexidade",
-  "algoritmo genético": 30,
-  30: "algoritmo genético",
-  "otimização de parâmetros": 31,
-  31: "otimização de parâmetros",
-  "espaço de solução grande": 32,
-  32: "espaço de solução grande",
-  "redes Bayesianas": 33,
-  33: "redes Bayesianas",
-  incerteza: 34,
-  34: "incerteza",
-  "dados probabilísticos": 35,
-  35: "dados probabilísticos",
-  "algoritmo de agrupamento hierárquico": 36,
-  36: "algoritmo de agrupamento hierárquico",
-  "dados não rotulados": 37,
-  37: "dados não rotulados",
-  "necessidade de hierarquia": 38,
-  38: "necessidade de hierarquia",
-  "regressão logística": 39,
-  39: "regressão logística",
-  "classificação binária": 40,
-  40: "classificação binária",
-  "Naive Bayes": 41,
-  41: "Naive Bayes",
-  classificação: 42,
-  42: "classificação",
-  "dados textuais": 43,
-  43: "dados textuais",
-  "algoritmo A*": 44,
-  44: "algoritmo A*",
-  "busca de caminho": 45,
-  45: "busca de caminho",
-  "espaço de estado grande": 46,
-  46: "espaço de estado grande",
-  "algoritmo de Floresta Aleatória": 47,
-  47: "algoritmo de Floresta Aleatória",
-  "grande quantidade de dados": 48,
-  48: "grande quantidade de dados",
-};
-
-const allSymptons = [
-  "3",
-  "31",
-  "2",
-  "8",
-  "27",
-  "32",
-  "18",
-  "34",
-  "11",
-  "48",
-  "42",
-  "16",
-  "26",
-  "13",
-  "29",
-  "1",
-  "38",
-  "45",
-  "15",
-  "37",
-  "21",
-  "20",
-  "35",
-  "23",
-  "4",
-  "40",
-  "43",
-  "46",
-  "6",
-  "24",
-  "9",
-];
-
 export default function Home() {
   const [treePath, setTreePath] = useState([]);
   const [graph, setGraph] = useState({});
@@ -152,6 +17,8 @@ export default function Home() {
   const [solution, setSolution] = useState("");
   const [loading, setLoading] = useState(true);
   const [seeTree, setSeeTree] = useState(false);
+  const [nameConv, setNameConv] = useState({});
+  const [allSymptoms, setallSymptoms] = useState([]);
 
   const nameConversion = (name) => {
     // if ; in name
@@ -178,15 +45,15 @@ export default function Home() {
     if (id.includes(";")) {
       const ids = id.split(";");
       // if all ids are symptoms
-      if (ids.every((e) => allSymptons.includes(e))) {
+      if (ids.every((e) => allSymptoms.includes(e))) {
         return "Symptom";
       }
       // if all ids are causes
-      if (ids.every((e) => !allSymptons.includes(e))) {
+      if (ids.every((e) => !allSymptoms.includes(e))) {
         return "Cause";
       }
     }
-    if (allSymptons.includes(id)) {
+    if (allSymptoms.includes(id)) {
       return "Symptom";
     }
 
@@ -285,6 +152,8 @@ export default function Home() {
       axios.get("http://localhost:8000/tree").then((res) => {
         setStack(res.data.stack);
         setGraph(res.data.graph);
+        setNameConv(res.data.nameConv);
+        setallSymptoms(res.data.allSymptoms);
         setCurrentNode(res.data.next_symptom);
 
         calculateTree([...res.data.stack]);
@@ -300,6 +169,8 @@ export default function Home() {
       setStack(res.data.stack);
       setGraph(res.data.graph);
       setCurrentNode(res.data.next_symptom);
+      setNameConv(res.data.nameConv);
+      setallSymptoms(res.data.allSymptoms);
 
       calculateTree([...res.data.stack]);
 
