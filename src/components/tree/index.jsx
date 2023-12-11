@@ -54,140 +54,144 @@ const AnimatedTree = ({ data, treePath, setTreePath }) => {
       return data.length > 100 ? large : "";
     };
 
-    const cy = cytoscape({
-      container: document.getElementById("cy"),
-      style: [
-        //CORE
-        {
-          selector: "core",
-          css: {
-            "active-bg-size": 0, //The size of the active background indicator.
-          },
-        },
+    console.log("data changed")
 
-        //NODE
-        {
-          selector: "node",
-          css: {
-            width: textIfLarge("76px", "38px"),
-            height: textIfLarge("76px", "38px"),
-            "font-family": "Nokia Pure Regular",
-            "background-opacity": "1",
-          },
-        },
-        //GROUP
-        {
-          selector: "node.cy-expand-collapse-collapsed-node",
-          css: {
-            width: "56px",
-            height: "56px",
-            "background-opacity": "0",
-            "font-family": "Nokia Pure Regular",
-          },
-        },
-        {
-          selector: "$node > node",
-          css: {
-            "background-color": "#fff",
-            "background-opacity": "1",
-            "border-width": "1px",
-            "border-color": "#dcdcdc",
-
-            //LABEL
-            //label: "data(name)",
-            color: "#000",
-            shape: "rectangle",
-            "text-opacity": "0.56",
-            "font-size": "10px",
-            "text-transform": "uppercase",
-            "text-wrap": "none",
-            "text-max-width": "75px",
-            "padding-top": "16px",
-            "padding-left": "16px",
-            "padding-bottom": "16px",
-            "padding-right": "16px",
-          },
-        },
-        {
-          selector: ":parent",
-          css: {
-            "text-valign": "top",
-            "text-halign": "center",
-          },
-        },
-        //EDGE
-        {
-          selector: "edge",
-          style: {
-            width: 1,
-            "line-color": "#b8b8b8",
-            "curve-style": "bezier",
-
-            //LABEL
-            width: 3,
-            "line-color": (edge) => {
-              const idx = treePath.findIndex(
-                (item) => item.id === edge._private.source.id()
-              );
-              return idx >= 0 &&
-                idx < treePath.length - 1 &&
-                treePath[idx + 1].id === edge._private.target.id()
-                ? "#c00"
-                : "#ccc";
+    if (true) {
+      const cy = cytoscape({
+        container: document.getElementById("cy"),
+        style: [
+          //CORE
+          {
+            selector: "core",
+            css: {
+              "active-bg-size": 0, //The size of the active background indicator.
             },
-            "target-arrow-color": (edge) => {
-              const idx = treePath.findIndex(
-                (item) => item.id === edge._private.source.id()
-              );
-              return idx >= 0 &&
-                idx < treePath.length - 1 &&
-                treePath[idx + 1].id === edge._private.target.id()
-                ? "#c00"
-                : "#ccc";
+          },
+
+          //NODE
+          {
+            selector: "node",
+            css: {
+              width: textIfLarge("76px", "38px"),
+              height: textIfLarge("76px", "38px"),
+              "font-family": "Nokia Pure Regular",
+              "background-opacity": "1",
             },
-            "font-family": "Nokia Pure Regular",
-            "target-arrow-shape": "triangle",
-            label: "data(label)", // Display edge labels
-            "text-rotation": "autorotate",
-            "text-background-opacity": 1,
-            "text-background-color": "#fff",
-            "text-background-padding": "3px",
-            "curve-style": "bezier",
           },
-        },
-        {
-          selector: "edge.hover",
-          style: {
-            width: 2,
-            "line-color": "#239df9",
-            "target-arrow-color": "#239df9",
+          //GROUP
+          {
+            selector: "node.cy-expand-collapse-collapsed-node",
+            css: {
+              width: "56px",
+              height: "56px",
+              "background-opacity": "0",
+              "font-family": "Nokia Pure Regular",
+            },
           },
-        },
-        {
-          selector: "edge:selected",
-          style: {
-            width: 3,
-            "line-color": "#239df9",
-            "target-arrow-color": "#239df9",
+          {
+            selector: "$node > node",
+            css: {
+              "background-color": "#fff",
+              "background-opacity": "1",
+              "border-width": "1px",
+              "border-color": "#dcdcdc",
+
+              //LABEL
+              //label: "data(name)",
+              color: "#000",
+              shape: "rectangle",
+              "text-opacity": "0.56",
+              "font-size": "10px",
+              "text-transform": "uppercase",
+              "text-wrap": "none",
+              "text-max-width": "75px",
+              "padding-top": "16px",
+              "padding-left": "16px",
+              "padding-bottom": "16px",
+              "padding-right": "16px",
+            },
           },
+          {
+            selector: ":parent",
+            css: {
+              "text-valign": "top",
+              "text-halign": "center",
+            },
+          },
+          //EDGE
+          {
+            selector: "edge",
+            style: {
+              width: 1,
+              "line-color": "#b8b8b8",
+              "curve-style": "bezier",
+
+              //LABEL
+              width: 3,
+              "line-color": (edge) => {
+                const idx = treePath.findIndex(
+                  (item) => item.id === edge._private.source.id()
+                );
+                return idx >= 0 &&
+                  idx < treePath.length - 1 &&
+                  treePath[idx + 1].id === edge._private.target.id()
+                  ? "#c00"
+                  : "#ccc";
+              },
+              "target-arrow-color": (edge) => {
+                const idx = treePath.findIndex(
+                  (item) => item.id === edge._private.source.id()
+                );
+                return idx >= 0 &&
+                  idx < treePath.length - 1 &&
+                  treePath[idx + 1].id === edge._private.target.id()
+                  ? "#c00"
+                  : "#ccc";
+              },
+              "font-family": "Nokia Pure Regular",
+              "target-arrow-shape": "triangle",
+              label: "data(label)", // Display edge labels
+              "text-rotation": "autorotate",
+              "text-background-opacity": 1,
+              "text-background-color": "#fff",
+              "text-background-padding": "3px",
+              "curve-style": "bezier",
+            },
+          },
+          {
+            selector: "edge.hover",
+            style: {
+              width: 2,
+              "line-color": "#239df9",
+              "target-arrow-color": "#239df9",
+            },
+          },
+          {
+            selector: "edge:selected",
+            style: {
+              width: 3,
+              "line-color": "#239df9",
+              "target-arrow-color": "#239df9",
+            },
+          },
+        ],
+
+        layout: {
+          name: "dagre",
+          padding: 24,
+          spacingFactor: (data.length * 8) / 1000 + 4 / 3, // espacamento de acordo com o tamanho do grafo
         },
-      ],
 
-      layout: {
-        name: "dagre",
-        padding: 24,
-        spacingFactor: (data.length * 8) / 1000 + 4 / 3, // espacamento de acordo com o tamanho do grafo
-      },
+        elements: data,
 
-      elements: data,
-
-      zoomingEnabled: true,
-      userZoomingEnabled: true,
-      autoungrabify: false,
-      wheelSensitivity: 0.2,
-    });
-
-    cyRef.current = cy;
+        zoomingEnabled: true,
+        userZoomingEnabled: true,
+        autoungrabify: false,
+        wheelSensitivity: 0.2,
+      });
+    
+      cyRef.current = cy;
+    }
 
     if (cyRef.current) {
       cytoscape.warnings(true);
